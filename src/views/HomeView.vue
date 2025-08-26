@@ -1,24 +1,57 @@
 <template>
   <div>
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+    <!-- Hero Section with Card News -->
+    <section class="hero-section">
       <div class="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h1 class="text-4xl font-bold tracking-tight sm:text-5xl mb-6">
-            HR 교육자료 관리 시스템
+        <div class="text-center mb-16">
+          <h1 class="text-4xl font-bold tracking-tight sm:text-5xl mb-6 text-white">
+            🎓 HR 교육자료 관리 시스템
           </h1>
-          <p class="text-xl text-primary-100 mb-8 max-w-3xl mx-auto">
-            우리 회사의 모든 교육자료를 한 곳에서 쉽게 찾고, 다운로드하세요.<br>
-            로그인 없이 누구나 자유롭게 이용할 수 있습니다.
+          <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+            중요 교육 사안과 교육자료를 한 곳에서 확인하세요
           </p>
-          <div class="flex justify-center space-x-4">
-            <router-link to="/materials" class="bg-white text-primary-600 hover:bg-gray-50 font-medium py-3 px-6 rounded-lg transition-colors">
-              교육자료 둘러보기
-            </router-link>
-            <a href="#features" class="border border-white text-white hover:bg-white hover:text-primary-600 font-medium py-3 px-6 rounded-lg transition-colors">
-              더 알아보기
-            </a>
+        </div>
+        
+        <!-- 중요 교육 뉴스 섹션 -->
+        <div class="mb-16">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-white mb-4">🔥 중요 교육 사안</h2>
+            <p class="text-blue-100">최신 교육 정보와 공지사항을 확인하세요</p>
           </div>
+          
+          <!-- 로딩 상태 -->
+          <div v-if="educationNewsStore.loading" class="text-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+            <p class="mt-4 text-blue-100">교육 뉴스를 불러오는 중...</p>
+          </div>
+          
+          <!-- 교육 뉴스 그리드 -->
+          <div v-else-if="activeNews.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <GlassCardNews
+              v-for="(news, index) in activeNews"
+              :key="news.id"
+              :news="news"
+              :index="index"
+            />
+          </div>
+          
+          <!-- 교육 뉴스 없음 -->
+          <div v-else class="text-center py-12">
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
+              <p class="text-blue-100 text-lg mb-4">현재 표시할 교육 뉴스가 없습니다.</p>
+              <p class="text-blue-200 text-sm">관리자가 새로운 교육 뉴스를 추가하면 여기에 표시됩니다.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 액션 버튼 -->
+        <div class="flex justify-center space-x-4">
+          <router-link to="/materials" class="bg-white text-blue-600 hover:bg-gray-50 font-medium py-3 px-6 rounded-lg transition-all hover:scale-105">
+            📚 교육자료 둘러보기
+          </router-link>
+          <router-link to="/admin" class="border border-white text-white hover:bg-white hover:text-blue-600 font-medium py-3 px-6 rounded-lg transition-all hover:scale-105">
+            ⚙️ 관리자 페이지
+          </router-link>
         </div>
       </div>
     </section>
@@ -27,7 +60,7 @@
     <section class="py-12 bg-white">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">빠른 검색</h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">🔍 빠른 검색</h2>
           <p class="text-gray-600">찾고 있는 교육자료가 있나요?</p>
         </div>
         
@@ -43,7 +76,7 @@
     <section class="py-12 bg-gray-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">추천 교육자료</h2>
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">⭐ 추천 교육자료</h2>
           <p class="text-gray-600">인기 있고 중요한 교육자료들을 확인해보세요</p>
         </div>
         
@@ -77,7 +110,7 @@
     <section id="features" class="py-16 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">주요 기능</h2>
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">✨ 주요 기능</h2>
           <p class="text-gray-600">간편하고 효율적인 교육자료 관리 시스템</p>
         </div>
         
@@ -165,16 +198,20 @@ import { onMounted, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMaterialsStore } from '@/stores/materials'
 import { useCategoriesStore } from '@/stores/categories'
+import { useEducationNewsStore } from '@/stores/education-news'
 import MaterialCard from '@/components/MaterialCard.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import GlassCardNews from '@/components/GlassCardNews.vue'
 
 const router = useRouter()
 const materialsStore = useMaterialsStore()
 const categoriesStore = useCategoriesStore()
+const educationNewsStore = useEducationNewsStore()
 
 const searchLoading = ref(false)
 
 const featuredMaterials = computed(() => materialsStore.featuredMaterials)
+const activeNews = computed(() => educationNewsStore.activeNews)
 
 const handleQuickSearch = async (query: string, categoryId: number | null) => {
   searchLoading.value = true
@@ -205,10 +242,59 @@ const handleDownload = async (material: any) => {
 }
 
 onMounted(async () => {
-  // 추천 자료와 카테고리 정보 로드
+  // 추천 자료, 카테고리, 교육 뉴스 정보 로드
   await Promise.all([
     materialsStore.fetchMaterials({ is_featured: true, limit: 6 }),
-    categoriesStore.fetchCategories()
+    categoriesStore.fetchCategories(),
+    educationNewsStore.fetchNews()
   ])
 })
 </script>
+
+<style scoped>
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(1deg);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: auto;
+    padding: 4rem 0;
+  }
+  
+  .hero-section h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-section p {
+    font-size: 1.1rem;
+  }
+}
+</style>
