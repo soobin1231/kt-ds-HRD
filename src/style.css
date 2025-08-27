@@ -26,4 +26,216 @@
   .input {
     @apply border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent;
   }
+
+  /* 오로라 유리 효과 */
+  .aurora-glass {
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, 
+      rgba(173, 216, 230, 0.1) 0%, 
+      rgba(100, 149, 237, 0.3) 25%, 
+      rgba(255, 255, 255, 0.2) 50%, 
+      rgba(147, 112, 219, 0.2) 75%, 
+      rgba(0, 255, 255, 0.15) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+      0 8px 32px rgba(31, 38, 135, 0.37),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .aurora-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.1), 
+      transparent);
+    animation: aurora-shift 10s ease-in-out infinite;
+  }
+
+  .aurora-glass::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, 
+      rgba(173, 216, 230, 0.1) 0%, 
+      rgba(100, 149, 237, 0.05) 50%, 
+      transparent 100%);
+    animation: aurora-glow 6s ease-in-out infinite;
+  }
+
+  /* 3D 글씨체 */
+  .text-3d {
+    @apply font-bold;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 
+      0 1px 0 rgba(0, 0, 0, 0.3),
+      0 2px 0 rgba(0, 0, 0, 0.2),
+      0 3px 0 rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.2),
+      0 8px 16px rgba(0, 0, 0, 0.1);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    animation: text-3d 4s ease-in-out infinite;
+  }
+
+  .text-3d-glow {
+    @apply text-3d;
+    text-shadow: 
+      0 1px 0 rgba(0, 0, 0, 0.3),
+      0 2px 0 rgba(0, 0, 0, 0.2),
+      0 3px 0 rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.2),
+      0 8px 16px rgba(0, 0, 0, 0.1),
+      0 0 20px rgba(173, 216, 230, 0.5),
+      0 0 40px rgba(100, 149, 237, 0.3),
+      0 0 60px rgba(147, 112, 219, 0.2);
+  }
+
+  /* 오로라 배경 */
+  .aurora-bg {
+    background: linear-gradient(135deg, 
+      rgba(173, 216, 230, 0.05) 0%, 
+      rgba(100, 149, 237, 0.1) 25%, 
+      rgba(255, 255, 255, 0.08) 50%, 
+      rgba(147, 112, 219, 0.1) 75%, 
+      rgba(0, 255, 255, 0.08) 100%);
+    animation: aurora-shift 15s ease-in-out infinite;
+  }
+
+  /* 유리 카드 */
+  .glass-card {
+    @apply aurora-glass rounded-2xl p-8;
+    animation: aurora-float 8s ease-in-out infinite;
+  }
+
+  /* 유리 버튼 */
+  .glass-btn {
+    @apply aurora-glass rounded-xl px-6 py-3 font-semibold text-white transition-all duration-300;
+    animation: aurora-glow 6s ease-in-out infinite;
+  }
+
+  .glass-btn:hover {
+    @apply scale-105;
+    box-shadow: 
+      0 12px 40px rgba(31, 38, 135, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* 오로라 파티클 효과 */
+  .aurora-particle {
+    @apply absolute w-2 h-2 rounded-full opacity-60;
+    background: radial-gradient(circle, 
+      rgba(173, 216, 230, 0.8) 0%, 
+      rgba(100, 149, 237, 0.6) 50%, 
+      transparent 100%);
+    animation: aurora-float 6s ease-in-out infinite;
+  }
+
+  .aurora-particle:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .aurora-particle:nth-child(2) {
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+  }
+
+  .aurora-particle:nth-child(3) {
+    bottom: 30%;
+    left: 20%;
+    animation-delay: 4s;
+  }
+
+  .aurora-particle:nth-child(4) {
+    top: 40%;
+    right: 30%;
+    animation-delay: 6s;
+  }
+
+  /* 추가 오로라 효과 */
+  .aurora-wave {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg,
+      transparent 0%,
+      rgba(173, 216, 230, 0.1) 25%,
+      rgba(100, 149, 237, 0.2) 50%,
+      rgba(147, 112, 219, 0.1) 75%,
+      transparent 100%);
+    background-size: 200% 200%;
+    animation: aurora-wave 8s ease-in-out infinite;
+    opacity: 0.6;
+    z-index: -1;
+  }
+
+  .aurora-sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: aurora-sparkle 3s ease-in-out infinite;
+  }
+
+  .aurora-sparkle:nth-child(1) {
+    top: 25%;
+    left: 15%;
+    animation-delay: 0s;
+  }
+
+  .aurora-sparkle:nth-child(2) {
+    top: 65%;
+    right: 20%;
+    animation-delay: 1s;
+  }
+
+  .aurora-sparkle:nth-child(3) {
+    bottom: 35%;
+    left: 25%;
+    animation-delay: 2s;
+  }
+
+  /* 유리 질감 효과 */
+  .glass-texture {
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  }
+
+  /* 호버 시 추가 효과 */
+  .aurora-glass:hover::before {
+    animation-duration: 5s;
+  }
+
+  .aurora-glass:hover::after {
+    animation-duration: 3s;
+  }
+
+  /* 반응형 오로라 */
+  @media (max-width: 768px) {
+    .aurora-particle {
+      width: 1.5px;
+      height: 1.5px;
+    }
+    
+    .aurora-sparkle {
+      width: 3px;
+      height: 3px;
+    }
+  }
 }

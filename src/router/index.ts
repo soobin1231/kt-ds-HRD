@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('@/views/AdminView.vue')
     },
     {
+      path: '/aurora-demo',
+      name: 'AuroraDemo',
+      component: () => import('@/components/AuroraDemo.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/views/NotFoundView.vue')

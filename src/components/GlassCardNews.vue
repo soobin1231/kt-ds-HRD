@@ -82,7 +82,7 @@ const formatDate = (dateString: string) => {
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform-style: preserve-3d;
   transition: all 0.3s ease;
-  animation: float 6s ease-in-out infinite;
+  animation: aurora-float 8s ease-in-out infinite;
   overflow: hidden;
 }
 
@@ -93,51 +93,38 @@ const formatDate = (dateString: string) => {
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* 우선순위별 색상 테마 */
+/* 우선순위별 색상 테마 - 오로라 스타일 */
 .glass-card.priority-high {
   background: linear-gradient(135deg, 
     rgba(255, 107, 107, 0.1) 0%,
-    rgba(255, 159, 67, 0.1) 50%,
-    rgba(255, 205, 210, 0.1) 100%);
+    rgba(255, 159, 67, 0.1) 25%,
+    rgba(255, 193, 7, 0.1) 50%,
+    rgba(255, 107, 107, 0.1) 75%,
+    rgba(255, 159, 67, 0.1) 100%);
   border-color: rgba(255, 107, 107, 0.3);
+  animation: aurora-shift 8s ease-in-out infinite;
 }
 
 .glass-card.priority-medium {
   background: linear-gradient(135deg, 
     rgba(255, 193, 7, 0.1) 0%,
-    rgba(255, 152, 0, 0.1) 50%,
-    rgba(255, 235, 59, 0.1) 100%);
+    rgba(255, 152, 0, 0.1) 25%,
+    rgba(255, 235, 59, 0.1) 50%,
+    rgba(255, 193, 7, 0.1) 75%,
+    rgba(255, 152, 0, 0.1) 100%);
   border-color: rgba(255, 193, 7, 0.3);
+  animation: aurora-shift 10s ease-in-out infinite;
 }
 
 .glass-card.priority-low {
   background: linear-gradient(135deg, 
     rgba(76, 175, 80, 0.1) 0%,
-    rgba(139, 195, 74, 0.1) 50%,
-    rgba(200, 230, 201, 0.1) 100%);
+    rgba(139, 195, 74, 0.1) 25%,
+    rgba(200, 230, 201, 0.1) 50%,
+    rgba(76, 175, 80, 0.1) 75%,
+    rgba(139, 195, 74, 0.1) 100%);
   border-color: rgba(76, 175, 80, 0.3);
-}
-
-/* 오로라 배경 효과 */
-.aurora-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg,
-    rgba(255, 107, 107, 0.1),
-    rgba(255, 159, 67, 0.1),
-    rgba(255, 193, 7, 0.1),
-    rgba(76, 175, 80, 0.1),
-    rgba(33, 150, 243, 0.1),
-    rgba(156, 39, 176, 0.1),
-    rgba(255, 107, 107, 0.1)
-  );
-  background-size: 400% 400%;
-  animation: aurora 8s ease-in-out infinite;
-  opacity: 0.3;
-  z-index: -1;
+  animation: aurora-shift 12s ease-in-out infinite;
 }
 
 /* 카드 내용 */
@@ -157,24 +144,29 @@ const formatDate = (dateString: string) => {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 16px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .priority-badge.priority-high {
   background: rgba(255, 107, 107, 0.2);
   color: #ff6b6b;
   border: 1px solid rgba(255, 107, 107, 0.3);
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
 }
 
 .priority-badge.priority-medium {
   background: rgba(255, 193, 7, 0.2);
   color: #ffc107;
   border: 1px solid rgba(255, 193, 7, 0.3);
+  box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
 }
 
 .priority-badge.priority-low {
   background: rgba(76, 175, 80, 0.2);
   color: #4caf50;
   border: 1px solid rgba(76, 175, 80, 0.3);
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
 }
 
 .card-title {
@@ -218,25 +210,6 @@ const formatDate = (dateString: string) => {
   border-radius: 20px;
   pointer-events: none;
   z-index: 1;
-}
-
-/* 애니메이션 */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes aurora {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
 }
 
 /* 반응형 디자인 */

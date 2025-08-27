@@ -29,6 +29,13 @@
               교육자료
             </router-link>
             <router-link 
+              to="/aurora-demo" 
+              class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-primary-600 font-medium': $route.name === 'AuroraDemo' }"
+            >
+              오로라 데모
+            </router-link>
+            <router-link 
               to="/admin" 
               class="btn-primary"
             >
