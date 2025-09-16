@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { EducationNews, CreateEducationNewsRequest, UpdateEducationNewsRequest } from '@/types/education-news'
+import { FileParser, type ParsedContent } from '@/utils/fileParser'
 
 export const useEducationNewsStore = defineStore('educationNews', () => {
   const news = ref<EducationNews[]>([])
@@ -129,6 +130,39 @@ export const useEducationNewsStore = defineStore('educationNews', () => {
     }
   }
 
+  const createNewsFromFile = async (file: File, priority: 'high' | 'medium' | 'low' = 'medium') => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      console.log('Starting file parsing for:', file.name)
+      
+      // 파일 파싱
+      const parsedContent = await FileParser.parseFile(file)
+      console.log('File parsed successfully:', parsedContent)
+      
+      // 뉴스 생성
+      const newNews: EducationNews = {
+        id: Date.now(),
+        title: parsedContent.title,
+        content: parsedContent.content,
+        priority,
+        is_active: true,
+        created_at: new Date().toISOString()
+      }
+      
+      console.log('Creating news:', newNews)
+      news.value.unshift(newNews)
+      return newNews
+    } catch (err: any) {
+      console.error('createNewsFromFile error:', err)
+      error.value = err.message || '파일에서 교육 뉴스 생성에 실패했습니다.'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   const toggleNewsStatus = async (id: number) => {
     try {
       const newsItem = news.value.find(n => n.id === id)
@@ -148,6 +182,7 @@ export const useEducationNewsStore = defineStore('educationNews', () => {
     highPriorityNews,
     fetchNews,
     createNews,
+    createNewsFromFile,
     updateNews,
     deleteNews,
     toggleNewsStatus

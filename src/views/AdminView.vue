@@ -1,19 +1,19 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">관리자 페이지</h1>
-      <p class="text-gray-600">교육자료와 교육 뉴스를 업로드하고 관리할 수 있습니다</p>
+      <h1 class="text-3xl font-luxury-heading text-gray-800 mb-2">관리자 페이지</h1>
+      <p class="font-luxury-body text-gray-600">교육자료와 교육 뉴스를 업로드하고 관리할 수 있습니다</p>
     </div>
 
     <!-- 인증 상태 확인 -->
-    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+    <div class="enhanced-glass-texture rounded-xl p-6 mb-8">
       <div class="flex items-center">
         <svg class="w-6 h-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
         </svg>
         <div class="flex-1">
-          <h3 class="text-lg font-medium text-yellow-800">관리자 인증이 필요합니다</h3>
-          <p class="text-yellow-700 mt-1">
+          <h3 class="text-lg font-luxury-heading text-gray-800">관리자 인증이 필요합니다</h3>
+          <p class="font-luxury-body text-gray-600 mt-1">
             현재 SSO(Single Sign-On) 연동 기능을 개발 중입니다. 
             완성되면 회사 계정으로 로그인하여 관리자 기능을 사용할 수 있습니다.
           </p>
@@ -25,7 +25,7 @@
     <div class="space-y-8">
       <!-- 통계 대시보드 -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="card">
+        <div class="enhanced-glass-texture rounded-xl p-6">
           <div class="flex items-center">
             <div class="p-3 rounded-full bg-blue-100">
               <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,13 +33,13 @@
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-2xl font-semibold text-gray-900">{{ stats.totalMaterials }}</p>
-              <p class="text-gray-600">총 교육자료</p>
+              <p class="text-2xl font-luxury-heading text-gray-800">{{ stats.totalMaterials }}</p>
+              <p class="font-luxury-body text-gray-600">총 교육자료</p>
             </div>
           </div>
         </div>
 
-        <div class="card">
+        <div class="enhanced-glass-texture rounded-xl p-6">
           <div class="flex items-center">
             <div class="p-3 rounded-full bg-green-100">
               <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,13 +47,13 @@
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-2xl font-semibold text-gray-900">{{ stats.totalDownloads }}</p>
-              <p class="text-gray-600">총 다운로드</p>
+              <p class="text-2xl font-luxury-heading text-gray-800">{{ stats.totalDownloads }}</p>
+              <p class="font-luxury-body text-gray-600">총 다운로드</p>
             </div>
           </div>
         </div>
 
-        <div class="card">
+        <div class="enhanced-glass-texture rounded-xl p-6">
           <div class="flex items-center">
             <div class="p-3 rounded-full bg-purple-100">
               <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,13 +62,13 @@
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-2xl font-semibold text-gray-900">{{ stats.totalViews }}</p>
-              <p class="text-gray-600">총 조회수</p>
+              <p class="text-2xl font-luxury-heading text-gray-800">{{ stats.totalViews }}</p>
+              <p class="font-luxury-body text-gray-600">총 조회수</p>
             </div>
           </div>
         </div>
 
-        <div class="card">
+        <div class="enhanced-glass-texture rounded-xl p-6">
           <div class="flex items-center">
             <div class="p-3 rounded-full bg-orange-100">
               <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,17 +76,17 @@
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-2xl font-semibold text-gray-900">{{ stats.totalNews }}</p>
-              <p class="text-gray-600">총 교육뉴스</p>
+              <p class="text-2xl font-luxury-heading text-gray-800">{{ stats.totalNews }}</p>
+              <p class="font-luxury-body text-gray-600">총 교육뉴스</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- 교육 뉴스 관리 섹션 -->
-      <div class="card">
+      <div class="enhanced-glass-texture rounded-xl p-6">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-semibold text-gray-900">🔥 교육 뉴스 관리</h2>
+          <h2 class="text-xl font-luxury-heading text-gray-800">교육 뉴스 관리</h2>
           <button 
             @click="showNewsForm = !showNewsForm"
             class="btn-primary"
@@ -97,9 +97,8 @@
 
         <!-- 교육 뉴스 추가 폼 -->
         <div v-if="showNewsForm" class="mb-8">
-          <EducationNewsForm
-            :loading="newsLoading"
-            @submit="handleNewsSubmit"
+          <NewsUploadForm
+            @success="handleNewsSuccess"
             @cancel="showNewsForm = false"
           />
         </div>
@@ -131,89 +130,8 @@
                   {{ formatDate(news.created_at) }}
                 </span>
               </div>
-              <h3 class="font-medium text-gray-900 mb-1">{{ news.title }}</h3>
-              <p class="text-sm text-gray-600 line-clamp-2">{{ news.content }}</p>
-            </div>
-            
-            <div class="flex items-center gap-2 ml-4">
-              <button
-                @click="toggleNewsStatus(news.id)"
-                class="text-sm px-3 py-1 rounded-full transition-colors"
-                :class="news.is_active 
-                  ? 'bg-green-100 text-green-800 hover:bg-green-200' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-              >
-                {{ news.is_active ? '활성' : '비활성' }}
-              </button>
-              <button
-                @click="deleteNews(news.id)"
-                class="text-red-600 hover:text-red-800 p-1"
-                title="삭제"
-              >
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-          
-          <!-- 교육 뉴스 없음 -->
-          <div v-if="educationNews.length === 0" class="text-center py-8 text-gray-500">
-            등록된 교육 뉴스가 없습니다.
-          </div>
-        </div>
-      </div>
-
-      <!-- 교육 뉴스 관리 섹션 -->
-      <div class="card">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-semibold text-gray-900">🔥 교육 뉴스 관리</h2>
-          <button 
-            @click="showNewsForm = !showNewsForm"
-            class="btn-primary"
-          >
-            {{ showNewsForm ? '닫기' : '새 뉴스 추가' }}
-          </button>
-        </div>
-
-        <!-- 교육 뉴스 추가 폼 -->
-        <div v-if="showNewsForm" class="mb-8">
-          <EducationNewsForm
-            :loading="newsLoading"
-            @submit="handleNewsSubmit"
-            @cancel="showNewsForm = false"
-          />
-        </div>
-
-        <!-- 교육 뉴스 목록 -->
-        <div class="space-y-4">
-          <div 
-            v-for="news in educationNews" 
-            :key="news.id"
-            class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-l-4"
-            :class="{
-              'border-red-400': news.priority === 'high',
-              'border-yellow-400': news.priority === 'medium',
-              'border-green-400': news.priority === 'low'
-            }"
-          >
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <span class="text-sm font-medium px-2 py-1 rounded-full"
-                  :class="{
-                    'bg-red-100 text-red-800': news.priority === 'high',
-                    'bg-yellow-100 text-yellow-800': news.priority === 'medium',
-                    'bg-green-100 text-green-800': news.priority === 'low'
-                  }"
-                >
-                  {{ getPriorityText(news.priority) }}
-                </span>
-                <span class="text-xs text-gray-500">
-                  {{ formatDate(news.created_at) }}
-                </span>
-              </div>
-              <h3 class="font-medium text-gray-900 mb-1">{{ news.title }}</h3>
-              <p class="text-sm text-gray-600 line-clamp-2">{{ news.content }}</p>
+              <h3 class="font-luxury-heading text-gray-900 mb-1">{{ news.title }}</h3>
+              <p class="font-luxury-body text-gray-600 line-clamp-2">{{ news.content }}</p>
             </div>
             
             <div class="flex items-center gap-2 ml-4">
@@ -246,8 +164,8 @@
       </div>
 
       <!-- 파일 업로드 섹션 -->
-      <div class="card">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">📚 새 교육자료 업로드</h2>
+      <div class="enhanced-glass-texture rounded-xl p-6">
+        <h2 class="text-xl font-luxury-heading text-gray-800 mb-4">새 교육자료 업로드</h2>
         
         <form @submit.prevent="handleUpload" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -309,8 +227,8 @@
           
           <!-- 파일 드롭존 -->
           <div 
-            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary-400 transition-colors"
-            :class="{ 'border-primary-400 bg-primary-50': isDragOver }"
+            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors"
+            :class="{ 'border-gray-400 bg-gray-50': isDragOver }"
             @dragover.prevent="isDragOver = true"
             @dragleave.prevent="isDragOver = false"
             @drop.prevent="handleFileDrop"
@@ -319,10 +237,10 @@
               <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <p class="text-gray-600 mb-2">파일을 드래그하거나 클릭하여 업로드</p>
+              <p class="font-luxury-body text-gray-600 mb-2">파일을 드래그하거나 클릭하여 업로드</p>
               <button
                 type="button"
-                @click="$refs.fileInput?.click()"
+                @click="() => fileInput?.click()"
                 class="btn-outline"
               >
                 파일 선택
@@ -340,7 +258,7 @@
               <div class="flex items-center">
                 <span class="text-2xl mr-3">{{ getFileIcon(uploadForm.file.type) }}</span>
                 <div>
-                  <p class="font-medium text-gray-900">{{ uploadForm.file.name }}</p>
+                  <p class="font-luxury-body text-gray-900">{{ uploadForm.file.name }}</p>
                   <p class="text-sm text-gray-600">{{ formatFileSize(uploadForm.file.size) }}</p>
                 </div>
               </div>
@@ -376,8 +294,8 @@
       </div>
 
       <!-- 최근 업로드된 자료 -->
-      <div class="card">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">📋 최근 업로드된 자료</h2>
+      <div class="enhanced-glass-texture rounded-xl p-6">
+        <h2 class="text-xl font-luxury-heading text-gray-800 mb-4">최근 업로드된 자료</h2>
         <div class="space-y-3">
           <div 
             v-for="material in recentMaterials" 
@@ -387,8 +305,8 @@
             <div class="flex items-center">
               <span class="text-lg mr-3">{{ getFileIcon(material.mime_type) }}</span>
               <div>
-                <p class="font-medium text-gray-900">{{ material.title }}</p>
-                <p class="text-sm text-gray-600">
+                <p class="font-luxury-heading text-gray-900">{{ material.title }}</p>
+                <p class="font-luxury-body text-gray-600">
                   {{ formatDate(material.created_at) }} · {{ formatFileSize(material.file_size) }}
                 </p>
               </div>
@@ -410,8 +328,7 @@ import { useMaterialsStore } from '@/stores/materials'
 import { useCategoriesStore } from '@/stores/categories'
 import { useEducationNewsStore } from '@/stores/education-news'
 import { formatFileSize, formatDate, getFileIcon } from '@/utils/format'
-import EducationNewsForm from '@/components/EducationNewsForm.vue'
-import type { CreateEducationNewsRequest } from '@/types/education-news'
+import NewsUploadForm from '@/components/NewsUploadForm.vue'
 
 const materialsStore = useMaterialsStore()
 const categoriesStore = useCategoriesStore()
@@ -419,7 +336,6 @@ const educationNewsStore = useEducationNewsStore()
 
 const isDragOver = ref(false)
 const uploading = ref(false)
-const newsLoading = ref(false)
 const showNewsForm = ref(false)
 const fileInput = ref<HTMLInputElement>()
 
@@ -438,7 +354,7 @@ const educationNews = computed(() => educationNewsStore.news)
 
 const stats = computed(() => {
   const totalMaterials = materials.value.length
-  const totalDownloads = materials.value.reduce((sum, m) => sum + m.download_count, 0)
+  const totalDownloads = materials.value.reduce((sum, m) => sum + (m.download_count || 0), 0)
   const totalViews = materials.value.reduce((sum, m) => sum + m.view_count, 0)
   const totalNews = educationNews.value.length
   
@@ -461,18 +377,8 @@ const getPriorityText = (priority: string) => {
   }
 }
 
-const handleNewsSubmit = async (data: CreateEducationNewsRequest) => {
-  try {
-    newsLoading.value = true
-    await educationNewsStore.createNews(data)
-    showNewsForm.value = false
-    alert('교육 뉴스가 성공적으로 추가되었습니다!')
-  } catch (error) {
-    console.error('Failed to create news:', error)
-    alert('교육 뉴스 추가에 실패했습니다.')
-  } finally {
-    newsLoading.value = false
-  }
+const handleNewsSuccess = () => {
+  showNewsForm.value = false
 }
 
 const toggleNewsStatus = async (id: number) => {

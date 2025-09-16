@@ -14,6 +14,16 @@ const router = createRouter({
       component: () => import('@/views/MaterialsView.vue')
     },
     {
+      path: '/education',
+      name: 'Education',
+      component: () => import('@/views/EducationView.vue')
+    },
+    {
+      path: '/education-system',
+      name: 'EducationSystem',
+      component: () => import('@/views/EducationSystemView.vue')
+    },
+    {
       path: '/materials/:id',
       name: 'MaterialDetail',
       component: () => import('@/views/MaterialDetailView.vue'),

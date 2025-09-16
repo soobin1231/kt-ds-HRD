@@ -37,7 +37,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { EducationNews } from '@/types/education-news'
 
 interface Props {
@@ -45,7 +44,7 @@ interface Props {
   index: number
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const getPriorityText = (priority: string) => {
   switch (priority) {
@@ -72,11 +71,11 @@ const formatDate = (dateString: string) => {
 
 .glass-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(40px);
   border-radius: 20px;
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -89,40 +88,40 @@ const formatDate = (dateString: string) => {
 .glass-card:hover {
   transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.2),
+    0 20px 40px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* 우선순위별 색상 테마 - 오로라 스타일 */
+/* 우선순위별 색상 테마 - 투명 유리 스타일 */
 .glass-card.priority-high {
   background: linear-gradient(135deg, 
-    rgba(255, 107, 107, 0.1) 0%,
-    rgba(255, 159, 67, 0.1) 25%,
-    rgba(255, 193, 7, 0.1) 50%,
-    rgba(255, 107, 107, 0.1) 75%,
-    rgba(255, 159, 67, 0.1) 100%);
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(255, 255, 255, 0.08) 100%);
   border-color: rgba(255, 107, 107, 0.3);
   animation: aurora-shift 8s ease-in-out infinite;
 }
 
 .glass-card.priority-medium {
   background: linear-gradient(135deg, 
-    rgba(255, 193, 7, 0.1) 0%,
-    rgba(255, 152, 0, 0.1) 25%,
-    rgba(255, 235, 59, 0.1) 50%,
-    rgba(255, 193, 7, 0.1) 75%,
-    rgba(255, 152, 0, 0.1) 100%);
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(255, 255, 255, 0.08) 100%);
   border-color: rgba(255, 193, 7, 0.3);
   animation: aurora-shift 10s ease-in-out infinite;
 }
 
 .glass-card.priority-low {
   background: linear-gradient(135deg, 
-    rgba(76, 175, 80, 0.1) 0%,
-    rgba(139, 195, 74, 0.1) 25%,
-    rgba(200, 230, 201, 0.1) 50%,
-    rgba(76, 175, 80, 0.1) 75%,
-    rgba(139, 195, 74, 0.1) 100%);
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(255, 255, 255, 0.08) 100%);
   border-color: rgba(76, 175, 80, 0.3);
   animation: aurora-shift 12s ease-in-out infinite;
 }
@@ -172,10 +171,10 @@ const formatDate = (dateString: string) => {
 .card-title {
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #2a2a2a;
   margin-bottom: 12px;
   line-height: 1.3;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .card-description {
@@ -183,12 +182,12 @@ const formatDate = (dateString: string) => {
   color: #4a4a4a;
   line-height: 1.6;
   margin-bottom: 16px;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 .card-date {
   font-size: 12px;
-  color: #888;
+  color: #666;
   font-weight: 500;
 }
 
@@ -202,9 +201,9 @@ const formatDate = (dateString: string) => {
   background: linear-gradient(
     135deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.1) 20%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 80%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.15) 80%,
     transparent 100%
   );
   border-radius: 20px;
@@ -224,21 +223,6 @@ const formatDate = (dateString: string) => {
   
   .card-description {
     font-size: 13px;
-  }
-}
-
-/* 다크 모드 지원 */
-@media (prefers-color-scheme: dark) {
-  .card-title {
-    color: #ffffff;
-  }
-  
-  .card-description {
-    color: #e0e0e0;
-  }
-  
-  .card-date {
-    color: #b0b0b0;
   }
 }
 </style>

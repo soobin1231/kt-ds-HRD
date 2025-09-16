@@ -1,43 +1,58 @@
 <template>
-  <div id="app" class="min-h-screen bg-gray-50">
+  <div id="app" class="min-h-screen bright-neon-gradient-bg">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b">
+    <nav class="vibrant-purple-navbar shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <div class="flex items-center">
             <router-link 
               to="/" 
-              class="text-xl font-bold text-gray-900 hover:text-primary-600 transition-colors"
+              class="flex items-center space-x-3 text-xl font-luxury-heading text-white hover:text-gray-200 transition-colors"
             >
-              🎓 HR 교육자료 시스템
+              <img src="/logo.svg" alt="DS University Logo" class="h-8 w-8" />
+              <span>DS University</span>
             </router-link>
           </div>
           
           <div class="flex items-center space-x-4">
             <router-link 
               to="/" 
-              class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md transition-colors"
-              :class="{ 'text-primary-600 font-medium': $route.name === 'Home' }"
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'Home' }"
             >
               홈
             </router-link>
             <router-link 
               to="/materials" 
-              class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md transition-colors"
-              :class="{ 'text-primary-600 font-medium': $route.name === 'Materials' }"
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'Materials' }"
             >
               교육자료
             </router-link>
             <router-link 
+              to="/education" 
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'Education' }"
+            >
+              교육 프로그램
+            </router-link>
+            <router-link 
+              to="/education-system" 
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'EducationSystem' }"
+            >
+              교육제도
+            </router-link>
+            <router-link 
               to="/aurora-demo" 
-              class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md transition-colors"
-              :class="{ 'text-primary-600 font-medium': $route.name === 'AuroraDemo' }"
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'AuroraDemo' }"
             >
               오로라 데모
             </router-link>
             <router-link 
               to="/admin" 
-              class="btn-primary"
+              class="enhanced-glass-texture rounded-xl px-6 py-3 font-semibold text-white transition-all duration-300"
             >
               관리자
             </router-link>
@@ -56,10 +71,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t mt-12">
+    <footer class="enhanced-glass-texture border-t mt-12">
       <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div class="text-center text-gray-500 text-sm">
-          © 2024 HR 교육자료 관리 시스템. Made with Vue.js + TypeScript
+        <div class="text-center bright-text-secondary text-sm">
+          © 2024 DS University. Made with Vue.js + TypeScript
         </div>
       </div>
     </footer>

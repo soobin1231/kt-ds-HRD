@@ -1,0 +1,50 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="55" fill="none" stroke="#dc2626" stroke-width="2"/>
+  
+  <!-- Circuit pattern -->
+  <g fill="none" stroke="#dc2626" stroke-width="1" opacity="0.6">
+    <circle cx="60" cy="60" r="35" fill="none"/>
+    <line x1="25" y1="60" x2="95" y2="60"/>
+    <line x1="60" y1="25" x2="60" y2="95"/>
+    <circle cx="60" cy="60" r="2" fill="#dc2626"/>
+    <circle cx="40" cy="40" r="1.5" fill="#dc2626"/>
+    <circle cx="80" cy="80" r="1.5" fill="#dc2626"/>
+    <circle cx="80" cy="40" r="1.5" fill="#dc2626"/>
+    <circle cx="40" cy="80" r="1.5" fill="#dc2626"/>
+  </g>
+  
+  <!-- Phoenix -->
+  <g transform="translate(60, 35)">
+    <!-- Phoenix body -->
+    <ellipse cx="0" cy="8" rx="6" ry="10" fill="#dc2626"/>
+    
+    <!-- Phoenix head -->
+    <circle cx="0" cy="2" r="5" fill="#dc2626"/>
+    
+    <!-- Phoenix beak -->
+    <polygon points="-2,1 -5,0 -2,-1" fill="#dc2626"/>
+    
+    <!-- Phoenix wings -->
+    <path d="M-12,6 Q-18,2 -14,8 Q-12,12 -8,8 Q-4,6 -12,6" fill="#dc2626"/>
+    <path d="M12,6 Q18,2 14,8 Q12,12 8,8 Q4,6 12,6" fill="#dc2626"/>
+  </g>
+  
+  <!-- Shield -->
+  <g transform="translate(60, 60)">
+    <!-- Shield background -->
+    <path d="M-18,-12 L-12,-18 L12,-18 L18,-12 L18,12 L12,18 L-12,18 L-18,12 Z" fill="#000000" stroke="#dc2626" stroke-width="2"/>
+    
+    <!-- KTDS text -->
+    <text x="-10" y="-4" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#dc2626">K</text>
+    <text x="-4" y="-4" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#dc2626">T</text>
+    <text x="4" y="-4" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#000000">D</text>
+    <text x="10" y="-4" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#000000">S</text>
+  </g>
+  
+  <!-- Banner -->
+  <g transform="translate(60, 85)">
+    <rect x="-25" y="-6" width="50" height="12" rx="6" fill="#000000" stroke="#dc2626" stroke-width="1"/>
+    <text x="0" y="2" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">DS UNIVERSITY</text>
+  </g>
+</svg>
