@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { EducationNews, CreateEducationNewsRequest, UpdateEducationNewsRequest } from '@/types/education-news'
+import { educationNewsAPI } from '@/services/api'
 import { FileParser, type ParsedContent } from '@/utils/fileParser'
 
 export const useEducationNewsStore = defineStore('educationNews', () => {
@@ -24,35 +25,8 @@ export const useEducationNewsStore = defineStore('educationNews', () => {
       loading.value = true
       error.value = null
       
-      // 임시 데이터 (실제로는 API 호출)
-      const mockData: EducationNews[] = [
-        {
-          id: 1,
-          title: '데이터 사이언스 기초 교육',
-          content: 'Python, R, SQL을 활용한 데이터 분석 기초 과정을 시작합니다. 모든 직원 대상으로 진행됩니다.',
-          priority: 'high',
-          is_active: true,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 2,
-          title: 'AI 윤리 및 가이드라인',
-          content: 'AI 기술 활용 시 고려해야 할 윤리적 문제와 회사 내 가이드라인을 안내합니다.',
-          priority: 'high',
-          is_active: true,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 3,
-          title: '클라우드 인프라 교육',
-          content: 'AWS, Azure, GCP 등 주요 클라우드 플랫폼 활용법을 학습합니다.',
-          priority: 'medium',
-          is_active: true,
-          created_at: new Date().toISOString()
-        }
-      ]
-      
-      news.value = mockData
+      const response = await educationNewsAPI.getAll({ is_active: true })
+      news.value = response.data
     } catch (err: any) {
       error.value = err.message || '교육 뉴스를 불러오는데 실패했습니다.'
       console.error('Failed to fetch education news:', err)
@@ -66,12 +40,8 @@ export const useEducationNewsStore = defineStore('educationNews', () => {
       loading.value = true
       error.value = null
       
-      const newNews: EducationNews = {
-        id: Date.now(),
-        ...data,
-        is_active: data.is_active ?? true,
-        created_at: new Date().toISOString()
-      }
+      const response = await educationNewsAPI.create(data)
+      const newNews = response.data
       
       news.value.unshift(newNews)
       return newNews
@@ -89,18 +59,15 @@ export const useEducationNewsStore = defineStore('educationNews', () => {
       loading.value = true
       error.value = null
       
+      const response = await educationNewsAPI.update(id, data)
+      const updatedNews = response.data
+      
       const index = news.value.findIndex(n => n.id === id)
-      if (index === -1) {
-        throw new Error('교육 뉴스를 찾을 수 없습니다.')
+      if (index !== -1) {
+        news.value[index] = updatedNews
       }
       
-      news.value[index] = {
-        ...news.value[index],
-        ...data,
-        updated_at: new Date().toISOString()
-      }
-      
-      return news.value[index]
+      return updatedNews
     } catch (err: any) {
       error.value = err.message || '교육 뉴스 수정에 실패했습니다.'
       console.error('Failed to update education news:', err)
@@ -115,12 +82,12 @@ export const useEducationNewsStore = defineStore('educationNews', () => {
       loading.value = true
       error.value = null
       
-      const index = news.value.findIndex(n => n.id === id)
-      if (index === -1) {
-        throw new Error('교육 뉴스를 찾을 수 없습니다.')
-      }
+      await educationNewsAPI.delete(id)
       
-      news.value.splice(index, 1)
+      const index = news.value.findIndex(n => n.id === id)
+      if (index !== -1) {
+        news.value.splice(index, 1)
+      }
     } catch (err: any) {
       error.value = err.message || '교육 뉴스 삭제에 실패했습니다.'
       console.error('Failed to delete education news:', err)
