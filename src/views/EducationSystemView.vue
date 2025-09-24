@@ -182,17 +182,16 @@
       @click="closeSystemDetail"
     >
       <div 
-        class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col"
         @click.stop
       >
         <!-- Modal Header -->
-        <div class="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
+        <div class="flex-shrink-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
           <div class="flex items-center justify-between">
             <div class="flex items-center">
               <div class="text-3xl mr-4">{{ selectedSystem.icon }}</div>
               <div>
                 <h2 class="text-2xl font-luxury-heading text-gray-800">{{ selectedSystem.name }}</h2>
-                <div class="font-luxury-body text-gray-600 space-y-4" v-html="selectedSystem.description"></div>
               </div>
             </div>
             <button 
@@ -206,93 +205,13 @@
           </div>
         </div>
 
-        <!-- Modal Content -->
-        <div class="p-6 space-y-6">
-          <!-- Basic Info -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 class="text-lg font-luxury-heading text-gray-800 mb-3">기본 정보</h3>
-              <div class="space-y-2">
-                <div class="flex justify-between">
-                  <span class="font-medium text-gray-700">기간:</span>
-                  <span class="font-luxury-body text-gray-600">{{ selectedSystem.duration }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="font-medium text-gray-700">상태:</span>
-                  <span 
-                    class="px-2 py-1 rounded-full text-xs font-medium"
-                    :class="selectedSystem.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
-                  >
-                    {{ selectedSystem.isActive ? '활성' : '비활성' }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="text-lg font-luxury-heading text-gray-800 mb-3">대상자</h3>
-              <div class="flex flex-wrap gap-2">
-                <span 
-                  v-for="audience in selectedSystem.targetAudience" 
-                  :key="audience"
-                  class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
-                >
-                  {{ audience }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Requirements -->
-          <div>
-            <h3 class="text-lg font-luxury-heading text-gray-800 mb-3">요구사항</h3>
-            <ul class="space-y-2">
-              <li 
-                v-for="requirement in selectedSystem.requirements" 
-                :key="requirement"
-                class="flex items-center font-luxury-body text-gray-600"
-              >
-                <span class="text-blue-500 mr-3">•</span>
-                {{ requirement }}
-              </li>
-            </ul>
-          </div>
-
-          <!-- Benefits -->
-          <div>
-            <h3 class="text-lg font-luxury-heading text-gray-800 mb-3">주요 혜택</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div 
-                v-for="benefit in selectedSystem.benefits" 
-                :key="benefit"
-                class="flex items-center p-3 bg-green-50 rounded-lg"
-              >
-                <span class="text-green-500 mr-3">✓</span>
-                <span class="font-luxury-body text-gray-700">{{ benefit }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Process -->
-          <div>
-            <h3 class="text-lg font-luxury-heading text-gray-800 mb-3">교육 과정</h3>
-            <div class="space-y-3">
-              <div 
-                v-for="(step, index) in selectedSystem.process" 
-                :key="step"
-                class="flex items-center"
-              >
-                <div class="flex-shrink-0 w-8 h-8 bg-gray-800 text-white rounded-full flex items-center justify-center text-sm font-medium mr-4">
-                  {{ index + 1 }}
-                </div>
-                <span class="font-luxury-body text-gray-700">{{ step }}</span>
-              </div>
-            </div>
-          </div>
+        <!-- Modal Content - 스크롤 가능한 영역 -->
+        <div class="flex-1 overflow-y-auto p-6">
+          <div class="font-luxury-body text-gray-600 space-y-4" v-html="selectedSystem.description"></div>
         </div>
 
-        <!-- Modal Footer -->
-        <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-6 rounded-b-xl">
+        <!-- Modal Footer - 고정 버튼 -->
+        <div class="flex-shrink-0 bg-gray-50 border-t border-gray-200 p-6 rounded-b-xl">
           <div class="flex justify-end space-x-4">
             <button 
               @click="closeSystemDetail"
