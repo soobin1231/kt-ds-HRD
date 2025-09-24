@@ -70,7 +70,7 @@
                 </div>
               </div>
               
-              <p class="font-luxury-body text-gray-600 mb-4">{{ result.description }}</p>
+              <div class="font-luxury-body text-gray-600 mb-4" v-html="result.description"></div>
               
               <!-- Add Button -->
               <div class="flex justify-center">
@@ -155,44 +155,13 @@
 
             <!-- System Info -->
             <h3 class="text-lg font-luxury-heading text-gray-800 mb-2">{{ system.name }}</h3>
-            <p class="font-luxury-body text-gray-600 mb-4 line-clamp-3">{{ system.description }}</p>
-
-            <!-- Target Audience -->
-            <div class="mb-4">
-              <h4 class="text-sm font-medium text-gray-700 mb-2">대상자</h4>
-              <div class="flex flex-wrap gap-1">
-                <span 
-                  v-for="audience in system.targetAudience.slice(0, 3)" 
-                  :key="audience"
-                  class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
-                >
-                  {{ audience }}
-                </span>
-                <span 
-                  v-if="system.targetAudience.length > 3"
-                  class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
-                >
-                  +{{ system.targetAudience.length - 3 }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Benefits Preview -->
-            <div class="mb-4">
-              <h4 class="text-sm font-medium text-gray-700 mb-2">주요 혜택</h4>
-              <ul class="text-sm text-gray-600 space-y-1">
-                <li v-for="benefit in system.benefits.slice(0, 2)" :key="benefit" class="flex items-center">
-                  <span class="text-green-500 mr-2">✓</span>
-                  {{ benefit }}
-                </li>
-                <li v-if="system.benefits.length > 2" class="text-gray-500">
-                  +{{ system.benefits.length - 2 }}개 더
-                </li>
-              </ul>
-            </div>
+            <div class="text-sm text-gray-500 mb-4">자세한 내용을 보려면 자세히 보기를 클릭하세요</div>
 
             <!-- Action Button -->
-            <button class="w-full mt-4 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors font-luxury-body">
+            <button 
+              @click="openSystemDetail(system)"
+              class="w-full mt-4 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors font-luxury-body"
+            >
               자세히 보기
             </button>
           </div>
@@ -223,7 +192,7 @@
               <div class="text-3xl mr-4">{{ selectedSystem.icon }}</div>
               <div>
                 <h2 class="text-2xl font-luxury-heading text-gray-800">{{ selectedSystem.name }}</h2>
-                <p class="font-luxury-body text-gray-600">{{ selectedSystem.description }}</p>
+                <div class="font-luxury-body text-gray-600 space-y-4" v-html="selectedSystem.description"></div>
               </div>
             </div>
             <button 
@@ -346,7 +315,7 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 import { useEducationSystemStore } from '@/stores/education-system'
-import api from '@/services/api'
+import { api, educationSystemAPI } from '@/services/api'
 import type { EducationSystem } from '@/types/education-system'
 
 const educationSystemStore = useEducationSystemStore()
@@ -406,14 +375,7 @@ const processExcelFile = async (file: File) => {
     
     console.log('엑셀 파일 처리 시작:', file.name)
     
-    const formData = new FormData()
-    formData.append('file', file)
-    
-    const response = await api.post('/api/education-systems/upload-excel', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
+    const response = await educationSystemAPI.uploadExcel(file)
     
     console.log('엑셀 분석 결과:', response.data)
     excelResults.value = response.data.systems
@@ -425,7 +387,24 @@ const processExcelFile = async (file: File) => {
     }
   } catch (error) {
     console.error('Excel file processing error:', error)
-    alert(`파일 처리 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
+    
+    // 더 자세한 오류 정보 표시
+    let errorMessage = '알 수 없는 오류'
+    if (error instanceof Error) {
+      errorMessage = error.message
+    }
+    
+    // Axios 오류인 경우 응답 데이터 확인
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as any
+      if (axiosError.response?.data?.detail) {
+        errorMessage = axiosError.response.data.detail
+      } else if (axiosError.response?.status) {
+        errorMessage = `서버 오류 (${axiosError.response.status}): ${axiosError.response.statusText}`
+      }
+    }
+    
+    alert(`파일 처리 중 오류가 발생했습니다: ${errorMessage}`)
   } finally {
     uploading.value = false
   }
@@ -448,13 +427,7 @@ const addEducationSystemFromExcel = async (systemData: any) => {
       description: systemData.description,
       category: systemData.category as 'certification' | 'training' | 'development' | 'specialization',
       icon: systemData.icon,
-      color: systemData.color,
-      duration: systemData.duration,
-      isActive: systemData.isActive,
-      targetAudience: systemData.targetAudience,
-      requirements: systemData.requirements,
-      benefits: systemData.benefits,
-      process: systemData.process
+      color: systemData.color
     }
     
     const createdSystem = await educationSystemStore.createSystem(newSystem)

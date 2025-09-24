@@ -365,5 +365,77 @@ export const educationNewsAPI = {
   }
 }
 
+export const educationSystemAPI = {
+  // Excel 파일 업로드 및 파싱
+  uploadExcel: async (file: File) => {
+    try {
+      if (await isBackendAvailable()) {
+        const formData = new FormData()
+        formData.append('file', file)
+        
+        return await api.post('/api/education-systems/upload-excel', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+      } else {
+        console.log('백엔드 서버가 연결되지 않아 더미 응답을 반환합니다.')
+        return {
+          data: {
+            message: '더미 데이터: 엑셀 파일에서 3개의 교육제도를 발견했습니다.',
+            processed_systems: 3,
+            systems: [
+              {
+                name: '더미 교육제도 1',
+                description: '더미 교육제도 설명 1',
+                category: 'certification',
+                icon: '🏆',
+                color: 'bg-yellow-100 text-yellow-800',
+                duration: '상세 문의',
+                isActive: true,
+                targetAudience: ['전체 직원'],
+                requirements: ['기본 요구사항 없음'],
+                benefits: ['전문성 향상'],
+                process: ['상세 과정은 문의 바랍니다']
+              }
+            ]
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Excel 파일 업로드 실패')
+      throw error
+    }
+  },
+  
+  // 교육제도 일괄 생성
+  bulkCreate: async (systems: any[]) => {
+    try {
+      if (await isBackendAvailable()) {
+        return await api.post('/api/education-systems/bulk-create', systems)
+      } else {
+        console.log('백엔드 서버가 연결되지 않아 더미 응답을 반환합니다.')
+        return {
+          data: {
+            message: '더미 데이터: 1개의 교육제도가 성공적으로 생성되었습니다.',
+            created_count: 1,
+            systems: [
+              {
+                id: 1,
+                name: '더미 교육제도',
+                description: '더미 교육제도 설명',
+                category: 'certification'
+              }
+            ]
+          }
+        }
+      }
+    } catch (error) {
+      console.log('교육제도 일괄 생성 실패')
+      throw error
+    }
+  }
+}
+
 export { api }
 export default api
