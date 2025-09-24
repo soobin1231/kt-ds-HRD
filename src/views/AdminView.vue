@@ -293,6 +293,109 @@
         </form>
       </div>
 
+      <!-- 챗봇 문서 업로드 -->
+      <div class="enhanced-glass-texture rounded-xl p-6">
+        <h2 class="text-xl font-luxury-heading text-gray-800 mb-4">🤖 EduBot 문서 학습</h2>
+        <p class="font-luxury-body text-gray-600 mb-6">
+          교육제도나 Q&A 관련 문서를 업로드하여 EduBot이 학습할 수 있도록 합니다.
+        </p>
+        
+        <!-- 문서 업로드 폼 -->
+        <form @submit.prevent="handleDocumentUpload" class="space-y-4">
+          <div 
+            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors"
+            :class="{ 'border-gray-400 bg-gray-50': isDocumentDragOver }"
+            @dragover.prevent="isDocumentDragOver = true"
+            @dragleave.prevent="isDocumentDragOver = false"
+            @drop.prevent="handleDocumentDrop"
+          >
+            <div v-if="!documentUploadForm.file">
+              <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <p class="font-luxury-body text-gray-600 mb-2">문서를 드래그하거나 클릭하여 업로드</p>
+              <p class="text-sm text-gray-500 mb-4">지원 형식: .docx, .txt</p>
+              <button
+                type="button"
+                @click="() => documentFileInput?.click()"
+                class="btn-outline"
+              >
+                문서 선택
+              </button>
+              <input
+                ref="documentFileInput"
+                type="file"
+                class="hidden"
+                accept=".docx,.txt"
+                @change="handleDocumentSelect"
+              />
+            </div>
+            
+            <div v-else class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+              <div class="flex items-center">
+                <span class="text-2xl mr-3">📄</span>
+                <div>
+                  <p class="font-luxury-body text-gray-900">{{ documentUploadForm.file.name }}</p>
+                  <p class="text-sm text-gray-600">{{ formatFileSize(documentUploadForm.file.size) }}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                @click="removeDocumentFile"
+                class="text-red-600 hover:text-red-800"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex justify-end space-x-4">
+            <button type="button" @click="resetDocumentForm" class="btn-secondary">
+              초기화
+            </button>
+            <button 
+              type="submit" 
+              :disabled="documentUploading || !documentUploadForm.file"
+              class="btn-primary"
+            >
+              <svg v-if="documentUploading" class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              </svg>
+              {{ documentUploading ? '학습 중...' : '문서 학습' }}
+            </button>
+          </div>
+        </form>
+        
+        <!-- 업로드된 문서 목록 -->
+        <div v-if="uploadedDocuments.length > 0" class="mt-6">
+          <h3 class="text-lg font-luxury-heading text-gray-800 mb-4">학습된 문서 목록</h3>
+          <div class="space-y-2">
+            <div 
+              v-for="doc in uploadedDocuments" 
+              :key="doc.filename"
+              class="flex items-center justify-between bg-gray-50 rounded-lg p-3"
+            >
+              <div class="flex items-center">
+                <span class="text-xl mr-3">📄</span>
+                <div>
+                  <p class="font-luxury-body text-gray-900">{{ doc.filename }}</p>
+                  <p class="text-sm text-gray-600">{{ doc.chunks_count }}개 청크로 분할됨</p>
+                </div>
+              </div>
+              <button
+                @click="deleteDocument(doc.filename)"
+                class="text-red-600 hover:text-red-800 text-sm"
+              >
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 최근 업로드된 자료 -->
       <div class="enhanced-glass-texture rounded-xl p-6">
         <h2 class="text-xl font-luxury-heading text-gray-800 mb-4">최근 업로드된 자료</h2>
@@ -338,6 +441,16 @@ const isDragOver = ref(false)
 const uploading = ref(false)
 const showNewsForm = ref(false)
 const fileInput = ref<HTMLInputElement>()
+
+// 챗봇 문서 업로드 관련
+const isDocumentDragOver = ref(false)
+const documentUploading = ref(false)
+const documentFileInput = ref<HTMLInputElement>()
+const uploadedDocuments = ref<any[]>([])
+
+const documentUploadForm = ref({
+  file: null as File | null
+})
 
 const uploadForm = reactive({
   title: '',
@@ -486,11 +599,98 @@ const handleUpload = async () => {
   }
 }
 
+// 챗봇 문서 업로드 관련 함수들
+const handleDocumentSelect = (event: Event) => {
+  const files = (event.target as HTMLInputElement).files
+  if (files && files.length > 0) {
+    documentUploadForm.value.file = files[0]
+  }
+}
+
+const handleDocumentDrop = (event: DragEvent) => {
+  isDocumentDragOver.value = false
+  const files = event.dataTransfer?.files
+  if (files && files.length > 0) {
+    documentUploadForm.value.file = files[0]
+  }
+}
+
+const removeDocumentFile = () => {
+  documentUploadForm.value.file = null
+  if (documentFileInput.value) {
+    documentFileInput.value.value = ''
+  }
+}
+
+const resetDocumentForm = () => {
+  documentUploadForm.value.file = null
+  if (documentFileInput.value) {
+    documentFileInput.value.value = ''
+  }
+}
+
+const handleDocumentUpload = async () => {
+  if (!documentUploadForm.value.file) {
+    alert('문서를 선택해주세요.')
+    return
+  }
+  
+  try {
+    documentUploading.value = true
+    
+    const formData = new FormData()
+    formData.append('file', documentUploadForm.value.file)
+    
+    const response = await api.post('/chatbot/upload-document', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    
+    alert(response.data.message)
+    resetDocumentForm()
+    
+    // 문서 목록 새로고침
+    await fetchUploadedDocuments()
+    
+  } catch (error) {
+    console.error('Document upload failed:', error)
+    alert('문서 업로드에 실패했습니다. 다시 시도해주세요.')
+  } finally {
+    documentUploading.value = false
+  }
+}
+
+const fetchUploadedDocuments = async () => {
+  try {
+    const response = await api.get('/chatbot/documents')
+    uploadedDocuments.value = response.data.documents
+  } catch (error) {
+    console.error('Failed to fetch documents:', error)
+  }
+}
+
+const deleteDocument = async (filename: string) => {
+  if (!confirm(`문서 '${filename}'을 삭제하시겠습니까?`)) {
+    return
+  }
+  
+  try {
+    await api.delete(`/chatbot/documents/${filename}`)
+    alert('문서가 삭제되었습니다.')
+    await fetchUploadedDocuments()
+  } catch (error) {
+    console.error('Failed to delete document:', error)
+    alert('삭제에 실패했습니다.')
+  }
+}
+
 onMounted(async () => {
   await Promise.all([
     materialsStore.fetchMaterials({ limit: 20 }),
     categoriesStore.fetchCategories(),
-    educationNewsStore.fetchNews()
+    educationNewsStore.fetchNews(),
+    fetchUploadedDocuments()
   ])
 })
 </script>

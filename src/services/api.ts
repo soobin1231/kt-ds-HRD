@@ -365,4 +365,5 @@ export const educationNewsAPI = {
   }
 }
 
+export { api }
 export default api

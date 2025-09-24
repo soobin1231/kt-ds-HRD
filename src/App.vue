@@ -7,10 +7,9 @@
           <div class="flex items-center">
             <router-link 
               to="/" 
-              class="flex items-center space-x-3 text-xl font-luxury-heading text-white hover:text-gray-200 transition-colors"
+              class="text-xl font-luxury-heading text-white hover:text-gray-200 transition-colors"
             >
-              <img src="/logo.svg" alt="DS University Logo" class="h-8 w-8" />
-              <span>DS University</span>
+              DS University
             </router-link>
           </div>
           
@@ -23,20 +22,6 @@
               홈
             </router-link>
             <router-link 
-              to="/materials" 
-              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
-              :class="{ 'text-pink-200 font-medium': $route.name === 'Materials' }"
-            >
-              교육자료
-            </router-link>
-            <router-link 
-              to="/education" 
-              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
-              :class="{ 'text-pink-200 font-medium': $route.name === 'Education' }"
-            >
-              교육 프로그램
-            </router-link>
-            <router-link 
               to="/education-system" 
               class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
               :class="{ 'text-pink-200 font-medium': $route.name === 'EducationSystem' }"
@@ -44,11 +29,25 @@
               교육제도
             </router-link>
             <router-link 
+              to="/education" 
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'Education' }"
+            >
+              교육과정
+            </router-link>
+            <router-link 
               to="/aurora-demo" 
               class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
               :class="{ 'text-pink-200 font-medium': $route.name === 'AuroraDemo' }"
             >
-              오로라 데모
+              EduBot
+            </router-link>
+            <router-link 
+              to="/materials" 
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'Materials' }"
+            >
+              교육talk
             </router-link>
             <router-link 
               to="/admin" 

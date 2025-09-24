@@ -37,7 +37,7 @@ const router = createRouter({
     {
       path: '/aurora-demo',
       name: 'AuroraDemo',
-      component: () => import('@/components/AuroraDemo.vue')
+      component: () => import('@/components/EduBot.vue')
     },
     {
       path: '/:pathMatch(.*)*',
