@@ -43,11 +43,25 @@
               EduBot
             </router-link>
             <router-link 
+              to="/embedding" 
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'Embedding' }"
+            >
+              임베딩
+            </router-link>
+            <router-link 
               to="/materials" 
               class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
               :class="{ 'text-pink-200 font-medium': $route.name === 'Materials' }"
             >
               교육talk
+            </router-link>
+            <router-link 
+              to="/vector-management" 
+              class="font-luxury-body text-white hover:text-gray-200 px-3 py-2 rounded-md transition-colors"
+              :class="{ 'text-pink-200 font-medium': $route.name === 'VectorManagement' }"
+            >
+              벡터관리
             </router-link>
             <router-link 
               to="/admin" 

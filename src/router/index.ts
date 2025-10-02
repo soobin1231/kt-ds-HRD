@@ -40,6 +40,16 @@ const router = createRouter({
       component: () => import('@/components/EduBot.vue')
     },
     {
+      path: '/embedding',
+      name: 'Embedding',
+      component: () => import('@/views/EmbeddingView.vue')
+    },
+    {
+      path: '/vector-management',
+      name: 'VectorManagement',
+      component: () => import('@/views/VectorManagementView.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/views/NotFoundView.vue')
