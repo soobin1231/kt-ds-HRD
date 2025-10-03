@@ -15,177 +15,88 @@
       </div>
     </div>
 
-    <div class="max-w-6xl mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- 파일 업로드 영역 -->
-        <div class="lg:col-span-2">
-          <div class="bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-6">파일 업로드</h2>
-            
-            <!-- 파일 드래그 앤 드롭 영역 -->
-            <div
-              @drop="handleFileDrop"
-              @dragover.prevent
-              @dragenter.prevent
-              :class="[
-                'border-2 border-dashed rounded-lg p-8 text-center transition-colors',
-                isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
-              ]"
-            >
-              <div class="text-4xl mb-4">📁</div>
-              <p class="text-lg font-medium text-gray-900 mb-2">파일을 드래그하거나 클릭하여 업로드</p>
-              <p class="text-sm text-gray-600 mb-4">지원 형식: XLSX, MD, TXT</p>
-              
-              <input
-                ref="fileInput"
-                type="file"
-                accept=".xlsx,.md,.txt"
-                @change="handleFileSelect"
-                class="hidden"
-              />
-              
-              <button
-                @click="$refs.fileInput.click()"
-                class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                파일 선택
-              </button>
-            </div>
-
-            <!-- 업로드된 파일 -->
-            <div v-if="uploadedFile" class="mt-6">
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">업로드된 파일</h3>
-              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div class="flex items-center space-x-3">
-                  <span class="text-lg">{{ getFileIcon(uploadedFile.type) }}</span>
-                  <div>
-                    <p class="font-medium text-gray-900">{{ uploadedFile.name }}</p>
-                    <p class="text-sm text-gray-600">{{ formatFileSize(uploadedFile.size) }}</p>
-                  </div>
-                </div>
-                <button
-                  @click="removeFile"
-                  class="text-red-500 hover:text-red-700"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 청킹 설정 -->
-          <div class="mt-6">
-            <ChunkingSettings v-model:settings="chunkingSettings" />
-          </div>
-
-          <!-- 청킹 미리보기 -->
-          <div class="mt-6">
-            <ChunkPreview :chunks="chunks" :is-processing="isProcessing" />
-          </div>
+    <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      <!-- 파일 업로드 영역 -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">파일 업로드</h2>
+        
+        <!-- 파일 드래그 앤 드롭 영역 -->
+        <div
+          @drop="handleFileDrop"
+          @dragover.prevent
+          @dragenter.prevent
+          :class="[
+            'border-2 border-dashed rounded-lg p-8 text-center transition-colors',
+            isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+          ]"
+        >
+          <div class="text-4xl mb-4">📁</div>
+          <p class="text-lg font-medium text-gray-900 mb-2">파일을 드래그하거나 클릭하여 업로드</p>
+          <p class="text-sm text-gray-600 mb-4">지원 형식: XLSX, MD, TXT</p>
+          
+          <input
+            ref="fileInput"
+            type="file"
+            accept=".xlsx,.md,.txt"
+            @change="handleFileSelect"
+            class="hidden"
+          />
+          
+          <button
+            @click="$refs.fileInput.click()"
+            class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            파일 선택
+          </button>
         </div>
 
-        <!-- 설정 및 처리 영역 -->
-        <div class="space-y-6">
-          <!-- 처리 옵션 -->
-          <div class="bg-white rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">처리 옵션</h3>
-            
-            <!-- 파일 타입별 옵션 -->
-            <div class="space-y-4">
+        <!-- 업로드된 파일 -->
+        <div v-if="uploadedFile" class="mt-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">업로드된 파일</h3>
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center space-x-3">
+              <span class="text-lg">{{ getFileIcon(uploadedFile.type) }}</span>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">XLSX 규칙 설정</label>
-                <select v-model="xlsxConfig.ruleType" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                  <option value="auto">자동 감지</option>
-                  <option value="course">교육과정 정보</option>
-                  <option value="news">교육 뉴스</option>
-                  <option value="system">교육제도</option>
-                  <option value="material">학습자료</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">텍스트 전처리</label>
-                <div class="space-y-2">
-                  <label class="flex items-center">
-                    <input type="checkbox" v-model="preprocessing.removeEmptyLines" class="mr-2" />
-                    <span class="text-sm">빈 줄 제거</span>
-                  </label>
-                  <label class="flex items-center">
-                    <input type="checkbox" v-model="preprocessing.normalizeSpacing" class="mr-2" />
-                    <span class="text-sm">공백 정규화</span>
-                  </label>
-                  <label class="flex items-center">
-                    <input type="checkbox" v-model="preprocessing.removeMarkdown" class="mr-2" />
-                    <span class="text-sm">마크다운 문법 제거</span>
-                  </label>
-                </div>
+                <p class="font-medium text-gray-900">{{ uploadedFile.name }}</p>
+                <p class="text-sm text-gray-600">{{ formatFileSize(uploadedFile.size) }}</p>
               </div>
             </div>
-
-            <!-- 처리 버튼들 -->
-            <div class="space-y-3 mt-6">
-              <button
-                @click="previewChunks"
-                :disabled="!uploadedFile || isProcessing"
-                :class="[
-                  'w-full px-4 py-3 rounded-lg font-medium transition-colors',
-                  !uploadedFile || isProcessing
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                ]"
-              >
-                <span v-if="isProcessing">처리 중...</span>
-                <span v-else>청킹 미리보기</span>
-              </button>
-              
-              <button
-                v-if="showEmbeddingButton"
-                @click="createEmbeddings"
-                :disabled="chunks.length === 0 || isCreatingEmbeddings"
-                :class="[
-                  'w-full px-4 py-3 rounded-lg font-medium transition-colors',
-                  chunks.length === 0 || isCreatingEmbeddings
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-purple-500 text-white hover:bg-purple-600'
-                ]"
-              >
-                <span v-if="isCreatingEmbeddings">임베딩 생성 중...</span>
-                <span v-else>임베딩 생성</span>
-              </button>
-
-              <!-- 벡터 관리 페이지 링크 -->
-              <router-link 
-                to="/vector-management"
-                class="w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors border border-gray-300 text-center inline-block"
-              >
-                🗂️ 벡터 관리 페이지
-              </router-link>
-            </div>
-          </div>
-
-          <!-- 처리 상태 -->
-          <div class="bg-white rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">처리 상태</h3>
-            <div class="space-y-3">
-              <div v-if="processingLogs.length > 0" class="max-h-60 overflow-y-auto">
-                <div
-                  v-for="(log, index) in processingLogs"
-                  :key="index"
-                  :class="[
-                    'p-2 rounded text-sm',
-                    log.type === 'success' ? 'bg-green-50 text-green-800' :
-                    log.type === 'error' ? 'bg-red-50 text-red-800' :
-                    'bg-blue-50 text-blue-800'
-                  ]"
-                >
-                  {{ log.message }}
-                </div>
-              </div>
-              <div v-else class="text-gray-500 text-sm">업로드된 파일을 처리할 준비가 되었습니다.</div>
-            </div>
+            <button
+              @click="removeFile"
+              class="text-red-500 hover:text-red-700"
+            >
+              ✕
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- 청킹 설정 -->
+      <div class="mt-6">
+        <ChunkingSettings v-model:settings="chunkingSettings" />
+      </div>
+
+      <!-- 청킹 미리보기 -->
+      <div class="mt-6">
+        <ChunkPreview 
+          :chunks="chunks" 
+          :is-processing="isProcessing"
+          :uploaded-file="uploadedFile"
+          :chunking-settings="chunkingSettings"
+          :xlsx-config="xlsxConfig"
+          :preprocessing="preprocessing"
+          :is-creating-embeddings="isCreatingEmbeddings"
+          :show-embedding-button="showEmbeddingButton"
+          :processing-logs="processingLogs"
+          :show-success-actions="showSuccessActions"
+          :embedding-result="embeddingResult"
+          @preview-chunks="previewChunks"
+          @create-embeddings="createEmbeddings"
+          @start-new-upload="startNewUpload"
+          @hide-success-actions="hideSuccessActions"
+        />
+      </div>
+
     </div>
   </div>
 </template>
@@ -221,13 +132,18 @@ const showEmbeddingButton = ref(false)
 const processingLogs = ref<LogEntry[]>([])
 const fileInput = ref<HTMLInputElement>()
 const chunks = ref<string[]>([])
+const showSuccessActions = ref(false)
+const embeddingResult = ref<{
+  fileName: string
+  chunks: number
+  fileId: string
+} | null>(null)
 
-// 청킹 설정
+// 청킹 설정 - 자동 최적화 활성화 (기본값)
 const chunkingSettings = reactive<ChunkingSettingsType>({
-  chunkSize: 1000,
-  overlap: 200,
-  strategy: 'word',
-  preserveStructure: true
+  autoOptimize: true,
+  chunkSize: 500,  // 수동 모드용 기본값
+  overlap: 100     // 수동 모드용 기본값
 })
 
 // XLSX 설정
@@ -277,29 +193,31 @@ const handleFileSelect = (event: DragEvent) => {
 
 // 파일 추가
 const addFiles = (files: File[]) => {
-  const allowedTypes = [
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // xlsx
-    'text/markdown', // md
-    'text/plain' // txt
+  if (files.length === 0) return
+  
+  // 첫 번째 파일만 사용
+  const file = files[0]
+  
+  // 지원되는 파일 형식 확인
+  const supportedTypes = [
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/markdown',
+    'text/plain'
   ]
   
-  const validFile = files.find(file => allowedTypes.includes(file.type))
-  
-  if (validFile) {
-    uploadedFile.value = {
-      file: validFile,
-      name: validFile.name,
-      size: validFile.size,
-      type: validFile.type
-    }
-    // 새 파일이 업로드되면 이전 청킹 결과 초기화
-    chunks.value = []
-    showEmbeddingButton.value = false
+  if (!supportedTypes.includes(file.type)) {
+    alert('지원되지 않는 파일 형식입니다. XLSX, MD, TXT 파일만 업로드 가능합니다.')
+    return
   }
   
-  if (!validFile && files.length > 0) {
-    addLog('warning', '지원되지 않는 파일 형식입니다. (지원: XLSX, MD, TXT)')
+  uploadedFile.value = {
+    file,
+    name: file.name,
+    size: file.size,
+    type: file.type
   }
+  
+  addLog('success', `파일 업로드 완료: ${file.name}`)
 }
 
 // 파일 제거
@@ -307,15 +225,27 @@ const removeFile = () => {
   uploadedFile.value = null
   chunks.value = []
   showEmbeddingButton.value = false
+  processingLogs.value = []
 }
 
 // 로그 추가
-const addLog = (type: 'info' | 'success' | 'error' | 'warning', message: string) => {
+const addLog = (type: LogEntry['type'], message: string) => {
   processingLogs.value.push({
-    type: type === 'warning' ? 'info' : type,
+    type,
     message,
     timestamp: new Date()
   })
+}
+
+// 파일 드래그 오버 상태 관리
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  isDragging.value = true
+}
+
+const handleDragLeave = (event: DragEvent) => {
+  event.preventDefault()
+  isDragging.value = false
 }
 
 // 청킹 미리보기
@@ -355,7 +285,19 @@ const previewChunks = async () => {
     
   } catch (error: any) {
     console.error('청킹 처리 오류:', error)
-    addLog('error', `청킹 중 오류 발생: ${error.response?.data?.message || error.message}`)
+    
+    // 더 자세한 에러 메시지 추출
+    let errorMessage = '알 수 없는 오류가 발생했습니다.'
+    
+    if (error.response?.data?.detail) {
+      errorMessage = error.response.data.detail
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message
+    } else if (error.message) {
+      errorMessage = error.message
+    }
+    
+    addLog('error', `❌ 청킹 처리 실패: ${errorMessage}`)
   } finally {
     isProcessing.value = false
   }
@@ -366,15 +308,15 @@ const createEmbeddings = async () => {
   if (!uploadedFile.value || chunks.value.length === 0) return
   
   isCreatingEmbeddings.value = true
+  processingLogs.value = []
   
   try {
-    addLog('info', '임베딩 생성 시작...')
+    addLog('info', `${uploadedFile.value.name} 임베딩 생성 시작...`)
     
-    let response
-    
+    let result
     if (uploadedFile.value.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
       // XLSX 파일 임베딩 생성
-      response = await embeddingAPI.createXlsxEmbeddings(
+      result = await embeddingAPI.createXlsxEmbeddings(
         uploadedFile.value.file,
         chunkingSettings,
         preprocessing,
@@ -382,76 +324,107 @@ const createEmbeddings = async () => {
       )
     } else {
       // 텍스트 파일 임베딩 생성
-      response = await embeddingAPI.createTextEmbeddings(
+      result = await embeddingAPI.createTextEmbeddings(
         uploadedFile.value.file,
         chunkingSettings,
         preprocessing
       )
     }
     
-    addLog('success', `${uploadedFile.value.name} 임베딩 생성 완료!`)
-    addLog('info', `생성된 벡터: ${response.data.embeddings}개`)
+    addLog('success', `${uploadedFile.value.name} 임베딩 생성 완료`)
+    addLog('info', '벡터 데이터베이스 업데이트 완료')
+    
+    // 성공 후 액션 표시
+    showSuccessActions.value = true
+    embeddingResult.value = {
+      fileName: uploadedFile.value.name,
+      chunks: result.data.chunks_created || 0,
+      fileId: result.data.file_id
+    }
     
   } catch (error: any) {
     console.error('임베딩 생성 오류:', error)
-    addLog('error', `임베딩 생성 중 오류 발생: ${error.response?.data?.message || error.message}`)
+    
+    // 더 자세한 에러 메시지 추출
+    let errorMessage = '알 수 없는 오류가 발생했습니다.'
+    
+    if (error.response?.data?.detail) {
+      errorMessage = error.response.data.detail
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message
+    } else if (error.message) {
+      errorMessage = error.message
+    }
+    
+    addLog('error', `❌ 임베딩 생성 실패: ${errorMessage}`)
+    
+    // 네트워크 오류나 서버 연결 문제인 경우 추가 안내
+    if (error.code === 'NETWORK_ERROR' || error.message.includes('Network Error')) {
+      addLog('error', '서버 연결을 확인해주세요. 백엔드 서버가 실행 중인지 확인하세요.')
+    }
   } finally {
     isCreatingEmbeddings.value = false
   }
 }
 
-// 드래그 이벤트 핸들러
-const handleDragEnter = () => {
-  isDragging.value = true
+// 성공 액션 함수들
+const startNewUpload = () => {
+  // 모든 상태 초기화
+  uploadedFile.value = null
+  chunks.value = []
+  showEmbeddingButton.value = false
+  showSuccessActions.value = false
+  embeddingResult.value = null
+  processingLogs.value = []
+  isProcessing.value = false
+  isCreatingEmbeddings.value = false
+  isDragging.value = false
+  
+  // 파일 입력 초기화
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
 }
 
-const handleDragLeave = () => {
-  isDragging.value = false
+const hideSuccessActions = () => {
+  showSuccessActions.value = false
+  embeddingResult.value = null
 }
 </script>
 
 <style scoped>
 .embedding-container {
-  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
 }
 
-/* 드래그 앤 드롭 애니메이션 */
+/* 드래그 앤 드롭 영역 스타일링 */
 .border-dashed {
-  transition: all 0.3s ease;
+  border-style: dashed;
 }
 
-/* 스크롤바 스타일링 */
-.max-h-60::-webkit-scrollbar {
-  width: 6px;
+/* 파일 아이콘 설정 */
+.file-icon {
+  font-size: 1.5rem;
 }
 
-.max-h-60::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-.max-h-60::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-.max-h-60::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* 애니메이션 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+/* 반응형 레이아웃 */
+@media (max-width: 768px) {
+  .max-w-4xl {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
-.flex > div {
-  animation: fadeIn 0.3s ease-out;
+/* 폰트 최적화 */
+.font-medium {
+  font-weight: 500;
+}
+
+/* 트랜지션 효과 */
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 </style>

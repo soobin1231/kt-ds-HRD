@@ -1,8 +1,8 @@
 export interface ChunkingSettings {
-  chunkSize: number
-  overlap: number
-  strategy: 'word' | 'sentence' | 'paragraph'
-  preserveStructure: boolean
+  autoOptimize: boolean
+  // 자동 최적화가 비활성화될 때만 사용
+  chunkSize?: number  // 문자 수 기준 (기본값: 500)
+  overlap?: number     // 문자 수 기준 (기본값: 100)
 }
 
 export interface PreprocessingOptions {
@@ -53,6 +53,12 @@ export interface VectorDocument {
   fileSize: number
   status: 'processing' | 'completed' | 'error'
   lastUpdated: string
+  // 확장된 메타데이터
+  tags?: string[]
+  category?: string
+  language?: string
+  version?: string
+  totalChunks?: number
 }
 
 export interface VectorDbStatus {
@@ -69,5 +75,28 @@ export interface VectorManagementStats {
   processingQueue: number
   errorCount: number
   averageProcessingTime: number
+}
+
+// 문서 청크 정보
+export interface DocumentChunk {
+  chunk_id: string
+  chunk_index: number
+  content: string
+  content_length: number
+  created_at: string
+  strategy: string
+  auto_optimized: boolean
+  chunk_size: number
+  overlap: number
+  source_file: string
+  file_type: string
+  language: string
+}
+
+// 문서 청크 응답
+export interface DocumentChunksResponse {
+  document_id: string
+  chunks: DocumentChunk[]
+  total_chunks: number
 }
 

@@ -34,6 +34,9 @@
               벡터
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              카테고리
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               상태
             </th>
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -74,6 +77,27 @@
             <!-- 벡터 수 -->
             <td class="px-6 py-4 whitespace-nowrap text-center">
               <span class="text-sm font-medium text-purple-600">{{ document.vectorCount }}</span>
+            </td>
+
+            <!-- 카테고리 -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex flex-col space-y-1">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  {{ getCategoryLabel(document.category) }}
+                </span>
+                <div v-if="document.tags && document.tags.length > 0" class="flex space-x-1">
+                  <span 
+                    v-for="tag in document.tags.slice(0, 2)" 
+                    :key="tag" 
+                    class="px-1 text-xs bg-gray-100 text-gray-600 rounded"
+                  >
+                    {{ tag }}
+                  </span>
+                  <span v-if="document.tags.length > 2" class="text-xs text-gray-400">
+                    +{{ document.tags.length - 2 }}
+                  </span>
+                </div>
+              </div>
             </td>
 
             <!-- 상태 -->
@@ -175,6 +199,18 @@ const getStatusClass = (status: string): string => {
     'error': 'bg-red-100 text-red-800'
   }
   return classMap[status] || 'bg-gray-100 text-gray-800'
+}
+
+// 카테고리 라벨 매핑
+const getCategoryLabel = (category: string): string => {
+  const labelMap: { [key: string]: string } = {
+    'hr_document': 'HR 문서',
+    'education': '교육자료',
+    'policy': '정책',
+    'procedure': '절차',
+    'manual': '매뉴얼'
+  }
+  return labelMap[category] || category || 'HR 문서'
 }
 
 // 파일 크기 포맷팅

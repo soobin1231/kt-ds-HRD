@@ -43,13 +43,13 @@
       <!-- 모달 액션 버튼들 -->
       <div class="flex space-x-3 justify-end">
         <button
-          @click="$emit('cancel')"
+          @click="emit('cancel')"
           class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
         >
           취소
         </button>
         <button
-          @click="$emit('confirm')"
+          @click="emit('confirm')"
           class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
         >
           삭제하기
@@ -71,8 +71,8 @@ interface Emits {
   (e: 'cancel'): void
 }
 
-defineProps<Props>()
-defineEmits<Emits>
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
 // 파일 아이콘 매핑
 const getFileIcon = (fileType: string): string => {

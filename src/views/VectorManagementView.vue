@@ -64,6 +64,13 @@
       @confirm="confirmDelete"
       @cancel="cancelDelete"
     />
+
+    <!-- 문서 청크 상세 보기 모달 -->
+    <DocumentChunksModal
+      v-if="showChunksModal"
+      :document="selectedDocument"
+      @close="closeChunksModal"
+    />
   </div>
 </template>
 
@@ -74,6 +81,7 @@ import type { VectorDocument, VectorDbStatus } from '@/types/embedding'
 import VectorDbDashboard from '@/components/VectorDbDashboard.vue'
 import VectorDocumentTable from '@/components/VectorDocumentTable.vue'
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue'
+import DocumentChunksModal from '@/components/DocumentChunksModal.vue'
 
 // 상태 관리
 const documents = ref<VectorDocument[]>([])
@@ -89,6 +97,7 @@ const vectorDbStatus = ref<VectorDbStatus>({
 const isLoadingDbStatus = ref(false)
 const isLoadingDocuments = ref(false)
 const showDeleteModal = ref(false)
+const showChunksModal = ref(false)
 const selectedDocument = ref<VectorDocument | null>(null)
 
 // 데이터 로딩 함수들
@@ -133,14 +142,17 @@ const handleDeleteDocument = (document: VectorDocument) => {
 }
 
 const handleViewDetails = (document: VectorDocument) => {
-  // 문서 상세 정보 보기 로직 (나중에 구현)
-  console.log('문서 상세 보기:', document)
+  selectedDocument.value = document
+  showChunksModal.value = true
 }
 
 const confirmDelete = async () => {
   if (!selectedDocument.value) return
   
+  const fileName = selectedDocument.value.fileName
+  
   try {
+    console.log(`🗑️ 문서 "${fileName}" 삭제 중...`)
     await embeddingAPI.deleteVectorDocument(selectedDocument.value.id)
     
     // 목록에서 제거
@@ -149,9 +161,10 @@ const confirmDelete = async () => {
     // 벡터 DB 상태 업데이트
     await loadVectorDbStatus()
     
-    console.log(`문서 ${selectedDocument.value.fileName} 삭제 완료`)
+    console.log(`✅ 문서 "${fileName}" 삭제 완료`)
   } catch (error) {
-    console.error('문서 삭제 실패:', error)
+    console.error(`❌ 문서 "${fileName}" 삭제 실패:`, error)
+    alert(`문서 삭제에 실패했습니다: ${error}`)
   } finally {
     showDeleteModal.value = false
     selectedDocument.value = null
@@ -160,6 +173,11 @@ const confirmDelete = async () => {
 
 const cancelDelete = () => {
   showDeleteModal.value = false
+  selectedDocument.value = null
+}
+
+const closeChunksModal = () => {
+  showChunksModal.value = false
   selectedDocument.value = null
 }
 

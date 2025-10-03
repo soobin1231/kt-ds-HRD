@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { api } from '@/services/api'
+import { chatbotApi } from '@/services/api'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -154,13 +154,16 @@ const sendMessage = async () => {
   scrollToBottom()
 
   try {
-    const response = await api.post('/chatbot/ask', {
-      question: question
+    const response = await chatbotApi.post('/api/chat/query', {
+      message: question,
+      use_search: true,
+      search_top_k: 5,
+      temperature: 0.7
     })
 
     const assistantMessage: Message = {
       role: 'assistant',
-      content: response.data.answer,
+      content: response.data.message,
       timestamp: new Date()
     }
 

@@ -140,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { useEducationStore } from '@/stores/education';
 import type { EducationCourse } from '@/types/education';
 import CourseDetailModal from '@/components/CourseDetailModal.vue';
@@ -210,6 +210,18 @@ const formatDate = (date: Date): string => {
 
 onMounted(() => {
   // 초기 데이터 로드 (필요시)
+});
+
+onUnmounted(() => {
+  // 리소스 정리
+  educationStore.error = null;
+  educationStore.loading = false;
+  
+  // 파일 입력 정리
+  if (fileInput.value) {
+    fileInput.value.value = '';
+    fileInput.value = null;
+  }
 });
 </script>
 

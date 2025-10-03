@@ -5,25 +5,56 @@ import type { EducationNews, CreateEducationNewsRequest, UpdateEducationNewsRequ
 import type { ChunkingSettings, PreprocessingOptions, XlsxConfig, ProcessingResponse } from '@/types/embedding'
 import { dummyMaterials, dummyCategories } from './dummyData'
 
-// 백엔드 연결 상태 확인
+// 백엔드 연결 상태 확인 (8001 포트 - 챗봇 서비스)
 const isBackendAvailable = async () => {
   try {
-    await axios.get('http://localhost:8000/api/health', { timeout: 2000 })
+    await axios.get('http://localhost:8001/health', { timeout: 2000 })
     return true
   } catch {
     return false
   }
 }
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+// HR Backend API (8000) - 교육자료, 카테고리, 뉴스 등
+const hrBackendApi = axios.create({
+  baseURL: import.meta.env.VITE_HR_BACKEND_URL || 'http://localhost:8000',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// 응답 인터셉터
+// Chatbot Service API (8001) - 임베딩, 벡터 관리 등
+const chatbotApi = axios.create({
+  baseURL: import.meta.env.VITE_CHATBOT_API_URL || 'http://localhost:8001',
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+// 기본 API (backward compatibility)
+const api = hrBackendApi
+
+// 응답 인터셉터 - HR Backend
+hrBackendApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('HR Backend API Error:', error)
+    return Promise.reject(error)
+  }
+)
+
+// 응답 인터셉터 - Chatbot Service
+chatbotApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('Chatbot API Error:', error)
+    return Promise.reject(error)
+  }
+)
+
+// 응답 인터셉터 - 기본 API
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -450,11 +481,12 @@ export const embeddingAPI = {
       if (await isBackendAvailable()) {
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('chunkingSettings', JSON.stringify(chunkingSettings))
-        formData.append('preprocessing', JSON.stringify(preprocessing))
-        formData.append('xlsxConfig', JSON.stringify(xlsxConfig))
+        formData.append('chunking_settings', JSON.stringify(chunkingSettings))
+        formData.append('preprocessing_options', JSON.stringify(preprocessing))
+        formData.append('create_embeddings', 'true')
+        formData.append('xlsx_config', JSON.stringify(xlsxConfig))
         
-        return await api.post<ProcessingResponse>('/api/embedding/upload-xlsx', formData, {
+        return await chatbotApi.post<ProcessingResponse>('/api/embedding/upload-xlsx', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -486,10 +518,11 @@ export const embeddingAPI = {
       if (await isBackendAvailable()) {
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('chunkingSettings', JSON.stringify(chunkingSettings))
-        formData.append('preprocessing', JSON.stringify(preprocessing))
+        formData.append('chunking_settings', JSON.stringify(chunkingSettings))
+        formData.append('preprocessing_options', JSON.stringify(preprocessing))
+        formData.append('create_embeddings', 'true')
         
-        return await api.post<ProcessingResponse>('/api/embedding/upload-text', formData, {
+        return await chatbotApi.post<ProcessingResponse>('/api/embedding/upload-text', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -515,7 +548,7 @@ export const embeddingAPI = {
   getStatus: async (fileId: string) => {
     try {
       if (await isBackendAvailable()) {
-        return await api.get(`/api/embedding/status/${fileId}`)
+        return await chatbotApi.get(`/api/embedding/status/${fileId}`)
       } else {
         console.log('백엔드 서버가 연결되지 않아 더미 상태를 반환합니다.')
         return {
@@ -558,49 +591,9 @@ export const embeddingAPI = {
   // 업로드된 문서 목록 조회
   getVectorDocuments: async () => {
     try {
-      if (await isBackendAvailable()) {
-        return await api.get('/api/embedding/documents')
-      } else {
-        console.log('백엔드 서버가 연결되지 않아 더미 데이터를 반환합니다.')
-        const mockDocuments = [
-          {
-            id: 'doc1',
-            fileName: '교육과정안내서.xlsx',
-            fileType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            uploadDate: new Date(Date.now() - 86400000 * 2).toISOString(),
-            chunkCount: 156,
-            vectorCount: 156,
-            fileSize: 2048000,
-            status: 'completed' as const,
-            lastUpdated: new Date(Date.now() - 3600000).toISOString()
-          },
-          {
-            id: 'doc2',
-            fileName: '교육제도변경내용.md',
-            fileType: 'text/markdown',
-            uploadDate: new Date(Date.now() - 86400000 * 5).toISOString(),
-            chunkCount: 89,
-            vectorCount: 89,
-            fileSize: 512000,
-            status: 'completed' as const,
-            lastUpdated: new Date(Date.now() - 86400000).toISOString()
-          },
-          {
-            id: 'doc3',
-            fileName: 'AI교육지침서.txt',
-            fileType: 'text/plain',
-            uploadDate: new Date(Date.now() - 3600000).toISOString(),
-            chunkCount: 0,
-            vectorCount: 0,
-            fileSize: 1024000,
-            status: 'processing' as const,
-            lastUpdated: new Date().toISOString()
-          }
-        ]
-        return { data: mockDocuments }
-      }
+      return await chatbotApi.get('/api/embedding/documents')
     } catch (error) {
-      console.log('문서 목록 조회 실패')
+      console.error('문서 목록 조회 실패:', error)
       throw error
     }
   },
@@ -608,23 +601,9 @@ export const embeddingAPI = {
   // 벡터 DB 상태 조회 (상세)
   getVectorDbStatus: async () => {
     try {
-      if (await isBackendAvailable()) {
-        return await api.get('/api/embedding/vdb-status')
-      } else {
-        console.log('백엔드 서버가 연결되지 않아 더미 상태를 반환합니다.')
-        return {
-          data: {
-            totalDocuments: 25,
-            totalChunks: 1847,
-            totalVectors: 1847,
-            databaseSize: '2.3 GB',
-            lastUpdated: new Date().toISOString(),
-            status: 'healthy' as const
-          }
-        }
-      }
+      return await chatbotApi.get('/api/embedding/vdb-status')
     } catch (error) {
-      console.log('벡터 DB 상태 조회 실패')
+      console.error('벡터 DB 상태 조회 실패:', error)
       throw error
     }
   },
@@ -632,19 +611,19 @@ export const embeddingAPI = {
   // 벡터 문서 삭제 (토큰과 벡터 모두 삭제)
   deleteVectorDocument: async (documentId: string) => {
     try {
-      if (await isBackendAvailable()) {
-        return await api.delete(`/api/embedding/documents/${documentId}`)
-      } else {
-        console.log('백엔드 서버가 연결되지 않아 더미 응답을 반환합니다.')
-        return {
-          data: {
-            success: true,
-            message: `더미 데이터: 문서 ${documentId}와 관련된 모든 데이터가 삭제되었습니다.`
-          }
-        }
-      }
+      return await chatbotApi.delete(`/api/embedding/documents/${documentId}`)
     } catch (error) {
-      console.log('벡터 문서 삭제 실패')
+      console.error('벡터 문서 삭제 실패:', error)
+      throw error
+    }
+  },
+
+  // 문서의 청크 목록 조회
+  getDocumentChunks: async (documentId: string) => {
+    try {
+      return await chatbotApi.get(`/api/embedding/documents/${documentId}/chunks`)
+    } catch (error) {
+      console.error('문서 청크 조회 실패:', error)
       throw error
     }
   },
@@ -660,38 +639,40 @@ export const embeddingAPI = {
   ): Promise<{ data: { chunks: string[] } }> => {
     try {
       if (await isBackendAvailable()) {
+        console.log('실제 백엔드 서버를 사용하여 XLSX 청킹을 처리합니다.')
+        
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('chunkingSettings', JSON.stringify(chunkingSettings))
-        formData.append('preprocessing', JSON.stringify(preprocessing))
-        formData.append('xlsxConfig', JSON.stringify(xlsxConfig))
-        formData.append('preview_only', 'true') // 미리보기 플래그
+        formData.append('chunking_settings', JSON.stringify({
+          chunk_size: chunkingSettings.chunkSize,
+          overlap: chunkingSettings.overlap,
+          strategy: chunkingSettings.strategy,
+          preserve_structure: chunkingSettings.preserveStructure
+        }))
+        formData.append('preprocessing_options', JSON.stringify({
+          remove_empty_lines: preprocessing.removeEmptyLines,
+          normalize_spacing: preprocessing.normalizeSpacing,
+          remove_markdown: preprocessing.removeMarkdown
+        }))
         
-        return await api.post<{ data: { chunks: string[] } }>('/api/embedding/preview-xlsx', formData, {
+        // 백엔드 PreviewResponse 형식으로 응답 받기
+        const response = await chatbotApi.post('/api/embedding/preview-xlsx', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         })
-      } else {
-        console.log('백엔드 서버가 연결되지 않아 더미 청킹 결과를 반환합니다.')
         
-        // 더미 청킹 데이터 생성
-        const dummyChunks = [
-          '교육과정 개선안에 대한 논의가 진행되었습니다...',
-          '다양한 교육 체계의 효과적인 운영 방안을 제시합니다...',
-          '학습자 중심의 체계적인 교육 프로그램 개발이 필요합니다...',
-          '국제 교육 격차 해소를 위한 정책 방향을 모색하고 있습니다...',
-          '지속 가능한 교육 발전을 위한 제도적 개선이 요구됩니다...'
-        ]
+        // 백엔드 응답에서 chunk content 추출
+        const chunks = response.data.chunks.map((chunk: any) => chunk.content)
         
         return {
-          data: {
-            chunks: dummyChunks
-          }
+            data: { chunks }
         }
+      } else {
+        throw new Error('백엔드 서버가 연결되지 않습니다. 서버 상태를 확인해주세요.')
       }
     } catch (error) {
-      console.log('XLSX 청킹 미리보기 실패')
+      console.error('XLSX 청킹 미리보기 실패:', error)
       throw error
     }
   },
@@ -704,37 +685,40 @@ export const embeddingAPI = {
   ): Promise<{ data: { chunks: string[] } }> => {
     try {
       if (await isBackendAvailable()) {
+        console.log('실제 백엔드 서버를 사용하여 텍스트 청킹을 처리합니다.')
+        
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('chunkingSettings', JSON.stringify(chunkingSettings))
-        formData.append('preprocessing', JSON.stringify(preprocessing))
-        formData.append('preview_only', 'true') // 미리보기 플래 그
+        formData.append('chunking_settings', JSON.stringify({
+          chunk_size: chunkingSettings.chunkSize,
+          overlap: chunkingSettings.overlap,
+          strategy: chunkingSettings.strategy,
+          preserve_structure: chunkingSettings.preserveStructure
+        }))
+        formData.append('preprocessing_options', JSON.stringify({
+          remove_empty_lines: preprocessing.removeEmptyLines,
+          normalize_spacing: preprocessing.normalizeSpacing,
+          remove_markdown: preprocessing.removeMarkdown
+        }))
         
-        return await api.post<{ data: { chunks: string[] } }>('/api/embedding/preview-text', formData, {
+        // 백엔드 PreviewResponse 형식으로 응답 받기
+        const response = await chatbotApi.post('/api/embedding/preview-text', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         })
-      } else {
-        console.log('백엔드 서버가 연결되지 않아 더미 청킹 결과를 반환합니다.')
         
-        // 더미 청킹 데이터 생성
-        const dummyChunks = [
-          'This is a sample chunk from the uploaded document...',
-          'Here we discuss various aspects of the content...',
-          'The document covers important topics and themes...',
-          'We explore different perspectives and viewpoints...',
-          'Key findings and conclusions are summarized here...'
-        ]
+        // 백엔드 응답에서 chunk content 추출
+        const chunks = response.data.chunks.map((chunk: any) => chunk.content)
         
         return {
-          data: {
-            chunks: dummyChunks
-          }
+            data: { chunks }
         }
+      } else {
+        throw new Error('백엔드 서버가 연결되지 않습니다. 서버 상태를 확인해주세요.')
       }
     } catch (error) {
-      console.log('텍스트 청킹 미리보기 실패')
+      console.error('텍스트 청킹 미리보기 실패:', error)
       throw error
     }
   },
@@ -750,28 +734,18 @@ export const embeddingAPI = {
       if (await isBackendAvailable()) {
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('chunkingSettings', JSON.stringify(chunkingSettings))
-        formData.append('preprocessing', JSON.stringify(preprocessing))
-        formData.append('xlsxConfig', JSON.stringify(xlsxConfig))
+        formData.append('chunking_settings', JSON.stringify(chunkingSettings))
+        formData.append('preprocessing_options', JSON.stringify(preprocessing))
+        formData.append('create_embeddings', 'true')
+        formData.append('xlsx_config', JSON.stringify(xlsxConfig))
         
-        return await api.post<ProcessingResponse & { embeddings: number }>('/api/embedding/create-xlsx-embeddings', formData, {
+        return await chatbotApi.post<ProcessingResponse & { embeddings: number }>('/api/embedding/upload-xlsx', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         })
       } else {
-        console.log('백엔드 서버가 연결되지 않아 더미 임베딩을 반환합니다.')
-        const chunkCount = Math.floor(Math.random() * 100) + 20
-        
-        return {
-          data: {
-            chunks: chunkCount,
-            embeddings: chunkCount,
-            success: true,
-            message: `더미 데이터: ${file.name} XLSX 파일의 임베딩이 성공적으로 생성되었습니다.`,
-            fileId: Math.random().toString(36).substr(2, 9)
-          }
-        }
+        throw new Error('백엔드 서버가 연결되지 않습니다. 서버 상태를 확인해주세요.')
       }
     } catch (error) {
       console.log('XLSX 임베딩 생성 실패')
@@ -789,27 +763,17 @@ export const embeddingAPI = {
       if (await isBackendAvailable()) {
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('chunkingSettings', JSON.stringify(chunkingSettings))
-        formData.append('preprocessing', JSON.stringify(preprocessing))
+        formData.append('chunking_settings', JSON.stringify(chunkingSettings))
+        formData.append('preprocessing_options', JSON.stringify(preprocessing))
+        formData.append('create_embeddings', 'true')
         
-        return await api.post<ProcessingResponse & { embeddings: number }>('/api/embedding/create-text-embeddings', formData, {
+        return await chatbotApi.post<ProcessingResponse & { embeddings: number }>('/api/embedding/upload-text', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         })
       } else {
-        console.log('백엔드 서버가 연결되지 않아 더미 임베딩을 반환합니다.')
-        const chunkCount = Math.floor(Math.random() * 50) + 10
-        
-        return {
-          data: {
-            chunks: chunkCount,
-            embeddings: chunkCount,
-            success: true,
-            message: `더미 데이터: ${file.name} 텍스트 파일의 임베딩이 성공적으로 생성되었습니다.`,
-            fileId: Math.random().toString(36).substr(2, 9)
-          }
-        }
+        throw new Error('백엔드 서버가 연결되지 않습니다. 서버 상태를 확인해주세요.')
       }
     } catch (error) {
       console.log('텍스트 임베딩 생성 실패')
@@ -818,5 +782,5 @@ export const embeddingAPI = {
   }
 }
 
-export { api }
+export { api, hrBackendApi, chatbotApi }
 export default api

@@ -19,7 +19,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-blue-600">총 문서</p>
-            <p class="text-2xl font-bold text-blue-800">{{ dbStatus.totalDocuments }}</p>
+            <p class="text-2xl font-bold text-blue-800">{{ formatNumber(dbStatus.totalDocuments) }}</p>
           </div>
           <div class="text-blue-400 text-2xl">📄</div>
         </div>
@@ -98,7 +98,10 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 // 숫자 포맷팅
-const formatNumber = (num: number): string => {
+const formatNumber = (num: number | undefined | null): string => {
+  if (num === undefined || num === null || isNaN(num)) {
+    return '0'
+  }
   if (num >= 1000) {
     return (num / 1000).toFixed(1) + 'K'
   }
