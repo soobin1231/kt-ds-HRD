@@ -210,6 +210,7 @@ const formatDate = (date: Date): string => {
 
 onMounted(() => {
   // 초기 데이터 로드 (필요시)
+  // 애니메이션이 비활성화되어 있어서 페이지 가시성 API 불필요
 });
 
 onUnmounted(() => {
@@ -222,6 +223,9 @@ onUnmounted(() => {
     fileInput.value.value = '';
     fileInput.value = null;
   }
+  
+  // 선택된 코스 정리
+  selectedCourse.value = null;
 });
 </script>
 
@@ -234,8 +238,9 @@ onUnmounted(() => {
     rgba(250, 249, 247, 0.98) 50%,
     rgba(249, 248, 246, 0.95) 75%,
     rgba(248, 247, 245, 0.98) 100%);
-  background-size: 400% 400%;
-  animation: aurora-shift 20s ease-in-out infinite;
+  background-size: 200% 200%;
+  /* 애니메이션 비활성화 - 성능 문제 해결 */
+  /* animation: aurora-shift 30s ease-in-out infinite; */
   padding: 2rem 0;
   position: relative;
   overflow: hidden;
@@ -252,7 +257,8 @@ onUnmounted(() => {
     radial-gradient(circle at 20% 20%, rgba(230, 220, 200, 0.04) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(235, 225, 205, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 50% 50%, rgba(225, 215, 195, 0.02) 0%, transparent 50%);
-  animation: aurora-shift 25s ease-in-out infinite;
+  /* 애니메이션 비활성화 - 성능 문제 해결 */
+  /* animation: aurora-shift 35s ease-in-out infinite; */
   pointer-events: none;
   z-index: -1;
 }
@@ -287,8 +293,8 @@ onUnmounted(() => {
 }
 
 .upload-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
   border-radius: 20px;
   padding: 2rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -422,7 +428,7 @@ onUnmounted(() => {
 
 .program-card {
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(5px);
   border-radius: 15px;
   padding: 1.5rem;
   cursor: pointer;
@@ -486,7 +492,7 @@ onUnmounted(() => {
 
 .college-section {
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(5px);
   border-radius: 15px;
   padding: 1.2rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -638,6 +644,38 @@ onUnmounted(() => {
   
   .college-title h3 {
     font-size: 1.1rem;
+  }
+}
+
+/* 성능 최적화를 위한 미디어 쿼리 */
+@media (prefers-reduced-motion: reduce) {
+  .education-page,
+  .education-page::before {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .education-page {
+    background-size: 150% 150%;
+    animation-duration: 40s;
+  }
+  
+  .education-page::before {
+    animation-duration: 45s;
+  }
+}
+
+/* 다크모드에서는 기존 밝은 배경 유지 */
+@media (prefers-color-scheme: dark) {
+  .education-page {
+    /* 기존 밝은 배경 유지 - 다크모드에서도 밝은 테마 사용 */
+    background: linear-gradient(135deg, 
+      rgba(252, 251, 249, 0.98) 0%,
+      rgba(251, 250, 248, 0.95) 25%,
+      rgba(250, 249, 247, 0.98) 50%,
+      rgba(249, 248, 246, 0.95) 75%,
+      rgba(248, 247, 245, 0.98) 100%);
   }
 }
 </style>
